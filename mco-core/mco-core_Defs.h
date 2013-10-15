@@ -23,8 +23,6 @@
 #include "mco-core.h"
 #include <ak47_Types.h>
 
-BEGIN_MCO_CORE_NAMESPACE
-
 // 14-bit limited values (still stored on 16 bits).
 typedef uint16  uint14;  
 typedef int16   int14;
@@ -34,6 +32,8 @@ typedef uint8   uint7;
 typedef int8    int7;
 
 // -----------------------------------------------------------------------------
+
+BEGIN_MCO_CORE_NAMESPACE
 
 typedef uint14 Amount;
 static const Amount sAmountMax  = 0x3fff;

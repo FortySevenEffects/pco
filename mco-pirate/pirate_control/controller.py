@@ -1,4 +1,3 @@
-é
 import rtmidi
 import random
 

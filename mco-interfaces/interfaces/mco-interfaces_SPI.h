@@ -22,6 +22,7 @@
 
 #include "mco-interfaces.h"
 #include <engine/mco-core_Pitch.h>
+#include <engine/mco-core_Math.h>
 #include <mco-common_Messages.h>
 #include <io/ak47_Spi.h>
 

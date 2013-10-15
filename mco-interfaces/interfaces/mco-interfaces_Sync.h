@@ -40,7 +40,7 @@ public:
 
 public:
     inline void init();
-    inline void setEnabled(bool inState);
+    static inline void setEnabled(bool inState);
 
 public:
     inline void handleSync(bool inPinState);

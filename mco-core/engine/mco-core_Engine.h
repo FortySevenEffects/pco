@@ -32,15 +32,15 @@
 
 BEGIN_MCO_CORE_NAMESPACE
 
-template<class TimerTraits>
+template<class Traits>
 class Engine
 {
 public:
-    typedef typename TimerTraits::MainTimer     MainTimer;
-    typedef typename TimerTraits::TickTimer     TickTimer;
-    typedef typename TimerTraits::TimerOutput   TimerOutput;
-    typedef Timer<MainTimer, TimerOutput>       TimerClass;
-    typedef PWM<TimerClass>                     PwmClass;
+    typedef typename Traits::MainTimer      MainTimer;
+    typedef typename Traits::TickTimer      TickTimer;
+    typedef typename Traits::TimerOutput    TimerOutput;
+    typedef Timer<MainTimer, TimerOutput>   TimerClass;
+    typedef PWM<TimerClass>                 PwmClass;
     
 public:
     inline  Engine();

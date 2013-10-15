@@ -41,7 +41,7 @@ inline void SpiInterface<Traits>::init()
     // Enable pull-ups on input to avoid listening to air wires.
     Traits::MisoPin::setOutput();
     Traits::MosiPin::setInput(true);
-    Traits::ClkPin::setInput(true);
+    Traits::SckPin::setInput(true);
     Traits::SsPin::setInput(true);
     Super::open();
 
@@ -144,16 +144,16 @@ void SpiInterface<Traits>::dispatch()
         case MessageStatus::FineNote:
             mEngine.setPitch(mco_core::Pitch(mMessage[1], mMessage[2]));
             break;
-/*
+
         case MessageStatus::GlobalDetune:
         {
-            const int14 detune = decode_s14(mMessage[1], mMessage[2]);
+            const int14 detune = mco_core::decode_s14(mMessage[1], mMessage[2]);
             mEngine.setDetune(mco_core::Pitch(detune / 100, detune % 100));
         }
             break;
 
         // ---------------------------------------------------------------------
-
+/*
         case MessageStatus::ModulationRange:
         {
             mco_core::Pitch range(mMessage[1], mMessage[2]);
@@ -167,20 +167,20 @@ void SpiInterface<Traits>::dispatch()
         case MessageStatus::DisableModulation:
             flagbox::clear<Flags::ModulationEnabled>();
             break;
-
+*/
         // ---------------------------------------------------------------------
 
-        case MessageStatus::EnableSync:
-            Sync::sInstance.setEnabled(true);
-            break;
-        case MessageStatus::DisableSync:
-            Sync::sInstance.setEnabled(false);
-            break;
+        // case MessageStatus::EnableSync:
+        //     Sync::setEnabled(true);
+        //     break;
+        // case MessageStatus::DisableSync:
+        //     Sync::setEnabled(false);
+        //     break;
 
         // ---------------------------------------------------------------------
 
         case MessageStatus::PortamentoAmount:
-            mEngine.mPortamento.setAmount(decode_u14(mMessage[1], mMessage[2]));
+            mEngine.mPortamento.setAmount(mco_core::decode_u14(mMessage[1], mMessage[2]));
             break;
         case MessageStatus::PortamentoMode:
             mEngine.mPortamento.setMode(mMessage[1]);
@@ -195,44 +195,44 @@ void SpiInterface<Traits>::dispatch()
         // ---------------------------------------------------------------------
 
         case MessageStatus::VibratoSpeed:
-            mEngine.mVibrato.setSpeed(decode_u14(mMessage[1], mMessage[2]));
+            mEngine.mVibrato.setSpeed(mco_core::decode_u14(mMessage[1], mMessage[2]));
             break;
         case MessageStatus::VibratoAmount:
-            mEngine.mVibrato.setAmount(decode_u14(mMessage[1], mMessage[2]));
+            mEngine.mVibrato.setAmount(mco_core::decode_u14(mMessage[1], mMessage[2]));
             break;
         case MessageStatus::VibratoWaveform:
             mEngine.mVibrato.setWaveform(mMessage[1]);
             break;
-        case MessageStatus::EnableVibrato:
-            flagbox::set<Flags::VibratoEnabled>();
-            break;
-        case MessageStatus::DisableVibrato:
-            flagbox::clear<Flags::VibratoEnabled>();
-            break;
+        //case MessageStatus::EnableVibrato:
+        //    flagbox::set<Flags::VibratoEnabled>();
+        //    break;
+        //case MessageStatus::DisableVibrato:
+        //    flagbox::clear<Flags::VibratoEnabled>();
+        //    break;
 
         // ---------------------------------------------------------------------
 
         case MessageStatus::PwmBaseLevel:
-            mEngine.mPWM.setBaseLevel(decode_s14(mMessage[1], mMessage[2]));
+            mEngine.mPWM.setBaseLevel(mco_core::decode_s14(mMessage[1], mMessage[2]));
             break;
         case MessageStatus::PwmSpeed:
-            mEngine.mPWM.setSpeed(decode_u14(mMessage[1], mMessage[2]));
+            mEngine.mPWM.setSpeed(mco_core::decode_u14(mMessage[1], mMessage[2]));
             break;
         case MessageStatus::PwmAmount:
-            mEngine.mPWM.setAmount(decode_u14(mMessage[1], mMessage[2]));
+            mEngine.mPWM.setAmount(mco_core::decode_u14(mMessage[1], mMessage[2]));
             break;
         case MessageStatus::PwmWaveform:
             mEngine.mPWM.setWaveform(mMessage[1]);
             break;
-        case MessageStatus::EnablePwm:
-            flagbox::set<Flags::PwmEnabled>();
-            break;
-        case MessageStatus::DisablePwm:
-            flagbox::clear<Flags::PwmEnabled>();
-            break;
+        //case MessageStatus::EnablePwm:
+        //    flagbox::set<Flags::PwmEnabled>();
+        //    break;
+        //case MessageStatus::DisablePwm:
+        //    flagbox::clear<Flags::PwmEnabled>();
+        //    break;
 
         // ---------------------------------------------------------------------
-*/
+
         default:
             break;
     }

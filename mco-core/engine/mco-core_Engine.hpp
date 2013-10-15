@@ -22,22 +22,22 @@
 
 BEGIN_MCO_CORE_NAMESPACE
 
-template<class TimerTraits>
-inline Engine<TimerTraits>::Engine()
+template<class Traits>
+inline Engine<Traits>::Engine()
     : mTimer()
     , mPWM(mTimer)
 {
 }
 
-template<class TimerTraits>
-inline Engine<TimerTraits>::~Engine()
+template<class Traits>
+inline Engine<Traits>::~Engine()
 {
 }
 
 // -----------------------------------------------------------------------------
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::init()
+template<class Traits>
+inline void Engine<Traits>::init()
 {
     // Set the CPU clock divider to 1 (full speed)
     CLKPR = 0x80;
@@ -61,8 +61,8 @@ inline void Engine<TimerTraits>::init()
     sei(); // Activate global interrupts
 }
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::process()
+template<class Traits>
+inline void Engine<Traits>::process()
 {
     mPortamento.process(mPitch);
     
@@ -76,69 +76,69 @@ inline void Engine<TimerTraits>::process()
     computeClock();
 }
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::setPitch(const Pitch& inPitch)
+template<class Traits>
+inline void Engine<Traits>::setPitch(const Pitch& inPitch)
 {
     mPortamento.trigger(inPitch);
     unmute();
 }
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::setModulation(const Pitch& inPitch)
+template<class Traits>
+inline void Engine<Traits>::setModulation(const Pitch& inPitch)
 {
     mModulation = inPitch;
 }
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::setDetune(const Pitch& inDetune)
+template<class Traits>
+inline void Engine<Traits>::setDetune(const Pitch& inDetune)
 {
     mDetune = inDetune;
 }
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::handleSyncPulse()
+template<class Traits>
+inline void Engine<Traits>::handleSyncPulse()
 {
     mTimer.reset();
 }
 
 // -----------------------------------------------------------------------------
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::mute()
+template<class Traits>
+inline void Engine<Traits>::mute()
 {
     mTimer.stop();
 }
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::unmute()
+template<class Traits>
+inline void Engine<Traits>::unmute()
 {
     mTimer.start();
 }
 
 // -----------------------------------------------------------------------------
 
-template<class TimerTraits>
-inline byte Engine<TimerTraits>::getCurrentOctave() const
+template<class Traits>
+inline byte Engine<Traits>::getCurrentOctave() const
 {
     return mOctave;
 }
 
-template<class TimerTraits>
-inline byte Engine<TimerTraits>::getCurrentSemiIndex() const
+template<class Traits>
+inline byte Engine<Traits>::getCurrentSemiIndex() const
 {
     return mSemiIndex;
 }
 
-template<class TimerTraits>
-inline byte Engine<TimerTraits>::getCurrentCentsOffset() const
+template<class Traits>
+inline byte Engine<Traits>::getCurrentCentsOffset() const
 {
     return byte(mPitch.cents);
 }
 
 // -----------------------------------------------------------------------------
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::computeClock()
+template<class Traits>
+inline void Engine<Traits>::computeClock()
 {
     mPitch.limit();                 // Constrain to acceptable range.
     mOctave = 0;
@@ -172,8 +172,8 @@ inline void Engine<TimerTraits>::computeClock()
 
 // -----------------------------------------------------------------------------
 
-template<class TimerTraits>
-inline void Engine<TimerTraits>::handleSyncTimerTick()
+template<class Traits>
+inline void Engine<Traits>::handleSyncTimerTick()
 {
     mVibrato.tick();
     mPWM.tick();
