@@ -1,5 +1,5 @@
 /*!
- *  \file       mco-firmware_Modulation.h
+ *  \file       mco-interfaces_Modulation.h
  *  \author     Francois Best
  *  \date       30/01/2013
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2013
@@ -20,67 +20,36 @@
 
 #pragma once
 
-#include "mco-firmware.h"
-#include "core/mco-firmware_PinMapping.h"
-#include "core/mco-firmware_Settings.h"
+#include "mco-interfaces.h"
 #include <engine/mco-core_Pitch.h>
-#include <engine/mco-core_FlagBox.h>
+#include <io/ak47_Analog.h>
 
-BEGIN_MCO_FIRMWARE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-typedef uint16 AdcSample;
+// Expected Traits content:
+// static const byte sNumBits        Used for oversampling filter (must be > 10)
+// typedef [ak47::AnalogPin] AdcPin  Pin to be used for ADC readings
 
-class ModulationFilter
-{
-public:
-     ModulationFilter();
-    ~ModulationFilter();
-    
-public:
-    inline void init();
-    inline AdcSample process(AdcSample inSample);
-    
-public:
-    // Oversampling is set to 16x, to reach a 12 bit output.
-    // We need to sum 16 samples and right-shift by 2.
-    static const byte sBufferSize           = 16;
-    static const byte sOversamplingShift    = 2;
-    
-private:
-    AdcSample   mBuffer[sBufferSize];
-    uint8       mWriteIndex;
-};
-
-// -----------------------------------------------------------------------------
-
+template<class Traits>
 class ModulationInput
 {
-private:
-    static const byte   sAdcBitResolution = 10;
-    static const byte   sAdcOvsResolution = sAdcBitResolution + ModulationFilter::sOversamplingShift;
-    static const uint16 sAdcMax = (1 << sAdcOvsResolution) - 1;
-    
 public:
-     ModulationInput();
-    ~ModulationInput();
-    
-    static ModulationInput sInstance;
+    inline  ModulationInput();
+    inline ~ModulationInput();
     
 public:
     inline void init();
     
-private:
-    inline AdcSample read() const;
-    
 public:
-    inline void process(Pitch& ioPitch);
-    inline void setRange(Pitch& inRange);
+    inline void process(mco_core::Pitch& ioPitch);
+    inline void setRange(mco_core::Pitch& inRange);
     
 private:
-    ModulationFilter    mFilter;
-    uint16              mRange;
+    typedef ak47::Adc::Sample Sample;
+    ak47::AdcOversamplingFilter<Traits::sNumBits> mFilter;
+    uint16 mRange;
 };
 
-END_MCO_FIRMWARE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE
 
-#include "interfaces/mco-firmware_Modulation.hpp"
+#include "interfaces/mco-interfaces_Modulation.hpp"

@@ -1,5 +1,5 @@
 /*!
- *  \file       mco-firmware.h
+ *  \file       mco-interfaces.h
  *  \author     Francois Best
  *  \date       11/12/2012
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2012
@@ -20,10 +20,10 @@
 
 #pragma once
 
-#define MCO_FIRMWARE_NAMESPACE              mco_firmware
-#define BEGIN_MCO_FIRMWARE_NAMESPACE        namespace MCO_FIRMWARE_NAMESPACE {
-#define END_MCO_FIRMWARE_NAMESPACE          }
+#define MCO_INTERFACES_NAMESPACE            mco_interfaces
+#define BEGIN_MCO_INTERFACES_NAMESPACE      namespace MCO_INTERFACES_NAMESPACE {
+#define END_MCO_INTERFACES_NAMESPACE        }
 
-BEGIN_MCO_FIRMWARE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-END_MCO_FIRMWARE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE

@@ -1,5 +1,5 @@
 /*!
- *  \file       mco-core_SPI.hpp
+ *  \file       mco-interfaces_SPI.hpp
  *  \author     Francois Best
  *  \date       30/01/2013
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2013
@@ -20,63 +20,60 @@
 
 #pragma once
 
-BEGIN_MCO_CORE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-template<class Engine>
-SpiInterface<Engine>::SpiInterface(Engine& inEngine)
+template<class Traits>
+inline SpiInterface<Traits>::SpiInterface(Engine& inEngine)
     : mEngine(inEngine)
 {
 }
 
-template<class Engine>
-SpiInterface<Engine>::~SpiInterface()
+template<class Traits>
+inline SpiInterface<Traits>::~SpiInterface()
 {
 }
 
 // -----------------------------------------------------------------------------
 
-template<class Engine>
-inline void SpiInterface<Engine>::init()
+template<class Traits>
+inline void SpiInterface<Traits>::init()
 {
-    // Enable pull-up on clock to avoid listening to air wire.
-    MCO_SPI_PORT |= (1 << MCO_SPI_SCK);
-    
+    // Enable pull-ups on input to avoid listening to air wires.
+    Traits::MisoPin::setOutput();
+    Traits::MosiPin::setInput(true);
+    Traits::ClkPin::setInput(true);
+    Traits::SsPin::setInput(true);
     Super::open();
 
+/*
 #if MCO_SPI_SLAVE_SELECT
     // Setup SS as a pin change interrupt
     GIMSK  |= (1 << PCIE0);             // Enable PCINT on port A
     PCMSK0 |= (1 << MCO_SPI_SS_PCINT);  // Enable interrupt for pin SS
     MCO_SPI_PORT |= (1 << MCO_SPI_SS);  // Enable pull-up for SS
-    
+
     // Init with current SS pin state.
-    handleSS(MCO_SPI_READ & (1 << MCO_SPI_SS));
+    handleSS(Traits::SsPin::read());
 #endif
+*/
 }
 
 // -----------------------------------------------------------------------------
 
-template<class Engine>
-inline void SpiInterface<Engine>::read()
+template<class Traits>
+inline void SpiInterface<Traits>::read()
 {
     byte data = 0;
-#if MCO_SPI_ONE_BYTE_PARSING
-    if (Super::read(data))
-    {
-        parse(data);
-    }
-#else
     while (Super::read(data))
     {
         parse(data);
     }
-#endif
 }
 
 // -----------------------------------------------------------------------------
 
-template<class Engine>
-inline void SpiInterface<Engine>::parse(byte inData)
+template<class Traits>
+inline void SpiInterface<Traits>::parse(byte inData)
 {
     if (mIndex == 0)
     {
@@ -97,7 +94,7 @@ inline void SpiInterface<Engine>::parse(byte inData)
     {
         mMessage[mIndex++] = inData;
     }
-    
+
     if (mIndex == mLength)
     {
         dispatch();
@@ -107,9 +104,10 @@ inline void SpiInterface<Engine>::parse(byte inData)
 
 // -----------------------------------------------------------------------------
 
-template<class Engine>
-inline void SpiInterface<Engine>::handleSS(bool inPinState)
+template<class Traits>
+inline void SpiInterface<Traits>::handleSS(bool inPinState)
 {
+    /*
     if (inPinState != flagbox::isSet<Flags::SpiSSPinState>())
     {
 #if MCO_SPI_SLAVE_SELECT
@@ -129,59 +127,58 @@ inline void SpiInterface<Engine>::handleSS(bool inPinState)
         if (inPinState)     flagbox::set<Flags::SpiSSPinState>();
         else                flagbox::clear<Flags::SpiSSPinState>();
     }
+    */
 }
 
 // -----------------------------------------------------------------------------
 
-template<class Engine>
-void SpiInterface<Engine>::dispatch()
+template<class Traits>
+void SpiInterface<Traits>::dispatch()
 {
     using namespace mco_common;
     switch (mMessage[0])
     {
         case MessageStatus::CoarseNote:
-            mEngine.mPortamento.trigger(Pitch(mMessage[1], 0));
-            //mEngine.mVibrato.reset();
+            mEngine.setPitch(mco_core::Pitch(mMessage[1], 0));
             break;
         case MessageStatus::FineNote:
-            mEngine.mPortamento.trigger(Pitch(mMessage[1], mMessage[2]));
-            //mEngine.mVibrato.reset();
+            mEngine.setPitch(mco_core::Pitch(mMessage[1], mMessage[2]));
             break;
-            
+/*
         case MessageStatus::GlobalDetune:
         {
             const int14 detune = decode_s14(mMessage[1], mMessage[2]);
-            mEngine.setDetune(Pitch(detune / 100, detune % 100));
+            mEngine.setDetune(mco_core::Pitch(detune / 100, detune % 100));
         }
             break;
-        
-        // ---------------------------------------------------------------------    
-            
+
+        // ---------------------------------------------------------------------
+
         case MessageStatus::ModulationRange:
         {
-            Pitch range(mMessage[1], mMessage[2]);
+            mco_core::Pitch range(mMessage[1], mMessage[2]);
             mEngine.mModulation.setRange(range);
         }
             break;
-        
+
         case MessageStatus::EnableModulation:
             flagbox::set<Flags::ModulationEnabled>();
             break;
         case MessageStatus::DisableModulation:
             flagbox::clear<Flags::ModulationEnabled>();
             break;
-            
+
         // ---------------------------------------------------------------------
-            
+
         case MessageStatus::EnableSync:
             Sync::sInstance.setEnabled(true);
             break;
         case MessageStatus::DisableSync:
             Sync::sInstance.setEnabled(false);
             break;
-        
+
         // ---------------------------------------------------------------------
-        
+
         case MessageStatus::PortamentoAmount:
             mEngine.mPortamento.setAmount(decode_u14(mMessage[1], mMessage[2]));
             break;
@@ -194,9 +191,9 @@ void SpiInterface<Engine>::dispatch()
         case MessageStatus::DisablePortamento:
             mEngine.mPortamento.setEnabled(false);
             break;
-           
+
         // ---------------------------------------------------------------------
-            
+
         case MessageStatus::VibratoSpeed:
             mEngine.mVibrato.setSpeed(decode_u14(mMessage[1], mMessage[2]));
             break;
@@ -211,8 +208,8 @@ void SpiInterface<Engine>::dispatch()
             break;
         case MessageStatus::DisableVibrato:
             flagbox::clear<Flags::VibratoEnabled>();
-            break;    
-        
+            break;
+
         // ---------------------------------------------------------------------
 
         case MessageStatus::PwmBaseLevel:
@@ -235,10 +232,10 @@ void SpiInterface<Engine>::dispatch()
             break;
 
         // ---------------------------------------------------------------------
-
+*/
         default:
             break;
     }
 }
 
-END_MCO_CORE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE

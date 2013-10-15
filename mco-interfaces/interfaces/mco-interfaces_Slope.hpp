@@ -1,5 +1,5 @@
 /*!
- *  \file       mco-core_Slope.hpp
+ *  \file       mco-interfaces_Slope.hpp
  *  \author     Francois Best
  *  \date       30/01/2013
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2013
@@ -20,7 +20,15 @@
 
 #pragma once
 
-BEGIN_MCO_CORE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
+
+Slope::Slope()
+{
+}
+
+Slope::~Slope()
+{
+}
 
 inline void Slope::init()
 {
@@ -90,4 +98,4 @@ inline void Slope::internalSetValue(uint16 inValue)
     OCR0B = inValue & 0xff; // LSB
 }
 
-END_MCO_CORE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE

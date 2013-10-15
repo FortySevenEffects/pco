@@ -20,30 +20,35 @@
 
 #pragma once
 
-#include "mco-core.h"
-#include "core/mco-core_PinMapping.h"
-#include "core/mco-core_Settings.h"
-#include "engine/mco-core_FlagBox.h"
-#include "engine/mco-core_Timer.h"
+#include "mco-interfaces.h"
 
-BEGIN_MCO_CORE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-class Sync 
+/*! Expected Traits contents:
+ *  typedef ak47::Pin SyncPin       GPIO pin to use for Sync input
+ *  
+ */
+template<class Traits>
+class Sync
 {
 public:
-     Sync();
-    ~Sync();
-    
-    static Sync sInstance;
-    
+    typedef typename Traits::Engine Engine;
+
+public:
+    inline  Sync(Engine& inEngine);
+    inline ~Sync();
+
 public:
     inline void init();
     inline void setEnabled(bool inState);
-    
+
 public:
     inline void handleSync(bool inPinState);
+
+private:
+    Engine& mEngine;
 };
 
-END_MCO_CORE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE
 
-#include "interfaces/mco-core_Sync.hpp"
+#include "interfaces/mco-interfaces_Sync.hpp"

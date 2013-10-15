@@ -1,5 +1,5 @@
 /*!
- *  \file       mco-firmware.cpp
+ *  \file       mco-interfaces.cpp
  *  \author     Francois Best
  *  \date       11/12/2012
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2012
@@ -18,8 +18,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mco-firmware.h"
+#include "mco-interfaces.h"
 
-BEGIN_MCO_FIRMWARE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-END_MCO_FIRMWARE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE

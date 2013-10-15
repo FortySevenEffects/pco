@@ -1,5 +1,5 @@
 /*!
- *  \file       mco-firmware_Modulation.cpp
+ *  \file       mco-interfaces_Modulation.cpp
  *  \author     Francois Best
  *  \date       30/01/2013
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2013
@@ -18,26 +18,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "interfaces/mco-firmware_Modulation.h"
+#include "interfaces/mco-interfaces_Modulation.h"
 
-BEGIN_MCO_FIRMWARE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-ModulationFilter::ModulationFilter()
-{
-}
 
-ModulationFilter::~ModulationFilter()
-{
-}
-
-// -----------------------------------------------------------------------------
-
-ModulationInput::ModulationInput()
-{
-}
-
-ModulationInput::~ModulationInput()
-{
-}
-
-END_MCO_FIRMWARE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE

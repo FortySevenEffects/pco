@@ -1,5 +1,5 @@
 /*!
- *  \file       mco-core_Slope.cpp
+ *  \file       mco-interfaces_Slope.cpp
  *  \author     Francois Best
  *  \date       30/01/2013
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2013
@@ -18,16 +18,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "interfaces/mco-core_Slope.h"
+#include "interfaces/mco-interfaces_Slope.h"
 
-BEGIN_MCO_CORE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-Slope::Slope()
-{
-}
-
-Slope::~Slope()
-{
-}
-
-END_MCO_CORE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE

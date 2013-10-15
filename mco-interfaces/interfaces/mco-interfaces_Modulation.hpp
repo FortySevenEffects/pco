@@ -20,88 +20,40 @@
 
 #pragma once
 
-BEGIN_MCO_CORE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-inline void ModulationFilter::init()
+template<class Traits>
+inline ModulationInput<Traits>::ModulationInput()
 {
-    // We could do this, but the whole memory is wiped to zero at boot time..
-    // mWriteIndex = 0;
-    // for (byte i = 0; i < sBufferSize; ++i)
-    // {
-    //     mBuffer[i] = 0;
-    // }
 }
 
-inline AdcSample ModulationFilter::process(AdcSample inSample)
+template<class Traits>
+inline ModulationInput<Traits>::~ModulationInput()
 {
-    mBuffer[mWriteIndex++] = inSample;
-    mWriteIndex &= (sBufferSize - 1);
-    
-    uint16 sum = 0;
-    for (byte i = 0; i < sBufferSize; ++i)
-    {
-        sum += mBuffer[i];
-    }
-    return sum >> sOversamplingShift;
 }
 
 // -----------------------------------------------------------------------------
 
-inline void ModulationInput::init()
+template<class Traits>
+inline void ModulationInput<Traits>::init()
 {
-    mFilter.init();
     mRange = 1800;
     
-    // set a2d prescale factor to 128
-    // 16 MHz / 128 = 125 KHz, inside the desired 50-200 KHz range.
-    ADCSRA |= (1 << ADPS2);
-    ADCSRA |= (1 << ADPS1);
-    ADCSRA |= (1 << ADPS0);
-    
-    // enable a2d conversions
-    ADCSRA |= (1 << ADEN);
-    ADMUX = MCO_MODULATION_PIN;         // Select channel
-    DIDR0 |= (1 << MCO_MODULATION_PIN); // Disable digital logic (saves power)
+    ak47::Adc::enable();
+    Traits::AdcPin::init();
 }
 
-inline AdcSample ModulationInput::read() const
+template<class Traits>
+inline void ModulationInput<Traits>::process(mco_core::Pitch& ioPitch)
 {
-    ADCSRA |= (1 << ADSC);              // Start conversion
-    while (bit_is_set(ADCSRA, ADSC))
-    {
-        // Wait until it's finished
-    }
-    
-    // Read data, LSB first.
-    const byte lsb = ADCL;
-    const byte msb = ADCH;
-    
-    return (msb << 8) | lsb;
+    const Sample sample = mFilter.process(Traits::AdcPin::read());
+    static const byte shift = Traits::sNumBits;
+    ioPitch.cents += ((uint32(sample) * mRange * 2) >> shift) - mRange;
+    ioPitch.computeRange();
 }
 
-inline void ModulationInput::process(Pitch& ioPitch)
-{
-    if (flagbox::isSet<Flags::ModulationEnabled>())
-    {
-#if MCO_MODULATION_FILTER
-        const AdcSample sample = mFilter.process(read());
-        static const byte shift = sAdcOvsResolution;
-#else
-        const AdcSample sample = read();
-        static const byte shift = sAdcBitResolution;
-#endif
-        
-#if MCO_MODULATION_TUNING
-        ioPitch.semitones = 0;
-        ioPitch.cents = (uint32(sample) * 12799) >> shift;
-#else
-        ioPitch.cents += ((uint32(sample) * mRange * 2) >> shift) - mRange;
-#endif
-        ioPitch.computeRange();
-    }
-}
-
-inline void ModulationInput::setRange(Pitch& inRange)
+template<class Traits>
+inline void ModulationInput<Traits>::setRange(mco_core::Pitch& inRange)
 {
     // [0, sAdcMax] -> [-range, +range] cents
     // Example range values:
@@ -110,4 +62,4 @@ inline void ModulationInput::setRange(Pitch& inRange)
     mRange = inRange.semitones * 100 + inRange.cents;
 }
 
-END_MCO_CORE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE

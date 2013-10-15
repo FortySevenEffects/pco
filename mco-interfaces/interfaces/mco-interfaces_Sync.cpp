@@ -18,18 +18,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "interfaces/mco-core_Sync.h"
+#include "interfaces/mco-interfaces_Sync.h"
 
-BEGIN_MCO_CORE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-Sync Sync::sInstance;
-
-Sync::Sync()
-{
-}
-
-Sync::~Sync()
-{
-}
-
-END_MCO_CORE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE

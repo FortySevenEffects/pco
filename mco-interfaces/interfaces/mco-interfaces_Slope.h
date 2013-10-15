@@ -1,5 +1,5 @@
 /*!
- *  \file       mco-core_Slope.h
+ *  \file       mco-interfaces_Slope.h
  *  \author     Francois Best
  *  \date       30/01/2013
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2013
@@ -20,18 +20,16 @@
 
 #pragma once
 
-#include "mco-core.h"
-#include "core/mco-core_PinMapping.h"
-#include "engine/mco-core_Pitch.h"
-#include "engine/mco-core_Tables.h"
+#include "mco-interfaces.h"
+#include <engine/mco-core_Pitch.h>
 
-BEGIN_MCO_CORE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
 class Slope
 {
 public:
-     Slope();
-    ~Slope();
+    inline  Slope();
+    inline ~Slope();
     
 public:
     inline void init();
@@ -44,6 +42,6 @@ private:
     inline void internalSetValue(uint16 inValue);
 };
 
-END_MCO_CORE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE
 
-#include "interfaces/mco-core_Slope.hpp"
+#include "interfaces/mco-interfaces_Slope.hpp"

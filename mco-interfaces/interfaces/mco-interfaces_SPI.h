@@ -1,5 +1,5 @@
 /*!
- *  \file       mco-core_SPI.h
+ *  \file       mco-interfaces_SPI.h
  *  \author     Francois Best
  *  \date       30/01/2013
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2013
@@ -20,24 +20,27 @@
 
 #pragma once
 
-#include "mco-core.h"
-#include "core/mco-core_PinMapping.h"
-#include "core/mco-core_Settings.h"
-#include "engine/mco-core_Math.h"
-#include "engine/mco-core_Pitch.h"
-#include "engine/mco-core_Flagbox.h"
-#include "interfaces/mco-core_Sync.h"
+#include "mco-interfaces.h"
+#include <engine/mco-core_Pitch.h>
 #include <mco-common_Messages.h>
 #include <io/ak47_Spi.h>
 
-BEGIN_MCO_CORE_NAMESPACE
+BEGIN_MCO_INTERFACES_NAMESPACE
 
-template<class Engine>
+/*! Expected Traits content:
+ * typedef Engine               MCO Engine
+ * typedef ak47::Pin MosiPin    SPI Pin
+ * typedef ak47::Pin MisoPin    SPI Pin
+ * typedef ak47::Pin SckPin     SPI Pin
+ * typedef ak47::Pin SsPin      SPI Pin
+ */
+template<class Traits>
 class SpiInterface
     : public ak47::SpiSlave<8>
 {
-public:
-    typedef ak47::SpiSlave<8> Super;
+private:
+    typedef ak47::SpiSlave<8>           Super;
+    typedef typename Traits::Engine     Engine;
 
 public:
     inline  SpiInterface(Engine& inEngine);
@@ -46,7 +49,6 @@ public:
 public:
     inline void init();
     inline void read();
-    inline const Pitch& getGlobalDetune() const;
     
 private:
     inline void parse(byte inData);
@@ -62,6 +64,6 @@ private:
     byte mLength;
 };
 
-END_MCO_CORE_NAMESPACE
+END_MCO_INTERFACES_NAMESPACE
 
-#include "interfaces/mco-core_SPI.hpp"
+#include "interfaces/mco-interfaces_SPI.hpp"
