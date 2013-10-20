@@ -173,7 +173,7 @@ inline void Engine<Traits>::computeClock()
 // -----------------------------------------------------------------------------
 
 template<class Traits>
-inline void Engine<Traits>::handleSyncTimerTick()
+inline void Engine<Traits>::handleSystemTick()
 {
     mVibrato.tick();
     mPWM.tick();

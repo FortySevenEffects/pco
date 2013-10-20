@@ -37,7 +37,7 @@ inline ModulationInput<Traits>::~ModulationInput()
 template<class Traits>
 inline void ModulationInput<Traits>::init()
 {
-    mRange = 1800;
+    mRange = 1200;
     
     ak47::Adc::enable();
     Traits::AdcPin::init();

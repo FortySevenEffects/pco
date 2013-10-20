@@ -69,7 +69,7 @@ private:
     inline void computeClock();
 
 public:
-    inline void handleSyncTimerTick();
+    inline void handleSystemTick();
 
 public: // For convenience access
     TimerClass      mTimer;
