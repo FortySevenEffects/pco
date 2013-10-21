@@ -13,9 +13,6 @@ append(mco-interfaces_SOURCES
     interfaces/mco-interfaces_SPI.cpp
     interfaces/mco-interfaces_SPI.hpp
     interfaces/mco-interfaces_SPI.h
-    interfaces/mco-interfaces_Sync.cpp
-    interfaces/mco-interfaces_Sync.hpp
-    interfaces/mco-interfaces_Sync.h
 )
 
 append(mco-interfaces_PUBLIC_DEPS
