@@ -29,11 +29,12 @@
 BEGIN_MCO_INTERFACES_NAMESPACE
 
 /*! Expected Traits content:
- * typedef Engine               MCO Engine
- * typedef ak47::Pin MosiPin    SPI Pin
- * typedef ak47::Pin MisoPin    SPI Pin
- * typedef ak47::Pin SckPin     SPI Pin
- * typedef ak47::Pin SsPin      SPI Pin
+ * typedef Engine                               MCO Engine
+ * typedef ak47::Pin MosiPin                    SPI Pin
+ * typedef ak47::Pin MisoPin                    SPI Pin
+ * typedef ak47::Pin SckPin                     SPI Pin
+ * typedef ak47::Pin SsPin                      SPI Pin
+ * typedef ak47::PCINT SlaveSelectInterrupt
  */
 template<class Traits>
 class SpiInterface
@@ -56,7 +57,7 @@ private:
     inline void dispatch();
     
 public:
-    inline void handleSS(bool inPinState);
+    inline void handleSlaveSelect();
     
 private:
     Engine& mEngine;

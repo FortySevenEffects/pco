@@ -39,23 +39,15 @@ template<class Traits>
 inline void SpiInterface<Traits>::init()
 {
     // Enable pull-ups on input to avoid listening to air wires.
-    Traits::MisoPin::setOutput();
     Traits::MosiPin::setInput(true);
     Traits::SckPin::setInput(true);
     Traits::SsPin::setInput(true);
-    Super::open();
+    
+    Traits::SlaveSelectInterrupt::init();
+    Traits::SlaveSelectInterrupt::enable();
 
-/*
-#if MCO_SPI_SLAVE_SELECT
-    // Setup SS as a pin change interrupt
-    GIMSK  |= (1 << PCIE0);             // Enable PCINT on port A
-    PCMSK0 |= (1 << MCO_SPI_SS_PCINT);  // Enable interrupt for pin SS
-    MCO_SPI_PORT |= (1 << MCO_SPI_SS);  // Enable pull-up for SS
-
-    // Init with current SS pin state.
-    handleSS(Traits::SsPin::read());
-#endif
-*/
+    // Init SPI state according to SlaveSelect pin.
+    handleSlaveSelect();
 }
 
 // -----------------------------------------------------------------------------
@@ -105,29 +97,19 @@ inline void SpiInterface<Traits>::parse(byte inData)
 // -----------------------------------------------------------------------------
 
 template<class Traits>
-inline void SpiInterface<Traits>::handleSS(bool inPinState)
+inline void SpiInterface<Traits>::handleSlaveSelect()
 {
-    /*
-    if (inPinState != flagbox::isSet<Flags::SpiSSPinState>())
+    const bool slaveSelected = !Traits::SsPin::read(); // Active low
+    if (slaveSelected) // Active low
     {
-#if MCO_SPI_SLAVE_SELECT
-        const bool slaveSelected = !inPinState; // Selected when SS is low.
-#else
-        const bool slaveSelected = true;
-#endif
-        if (slaveSelected)
-        {
-            MCO_SPI_DDR |= (1 << MCO_SPI_MISO); // MISO = Output
-        }
-        else
-        {
-            MCO_SPI_DDR &= ~(1 << MCO_SPI_MISO); // MISO = HiZ
-        }
-
-        if (inPinState)     flagbox::set<Flags::SpiSSPinState>();
-        else                flagbox::clear<Flags::SpiSSPinState>();
+        Traits::MisoPin::setOutput();
+        Super::open();
     }
-    */
+    else
+    {
+        Traits::MisoPin::setInput();
+        Super::close();
+    }
 }
 
 // -----------------------------------------------------------------------------
