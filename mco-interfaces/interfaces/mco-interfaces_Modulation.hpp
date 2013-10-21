@@ -40,6 +40,7 @@ inline void ModulationInput<Traits>::init()
     mRange = 1200;
     
     ak47::Adc::enable();
+    ak47::Adc::setPrescaler(ak47::Adc::prescale128);
     Traits::AdcPin::init();
 }
 
