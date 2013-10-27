@@ -22,6 +22,16 @@
 
 BEGIN_MCO_CORE_NAMESPACE
 
+inline Vibrato::Vibrato()
+{
+}
+
+inline Vibrato::~Vibrato()
+{
+}
+
+// -----------------------------------------------------------------------------
+
 inline void Vibrato::init()
 {
     // mAmount = 0;         // Already init'd to zero at boot time.

@@ -43,8 +43,8 @@ public:
     };
     
 public:
-     LFO();
-    ~LFO();
+    inline  LFO();
+    inline ~LFO();
     
 public:
     inline void init();

@@ -31,8 +31,8 @@ BEGIN_MCO_CORE_NAMESPACE
 class Vibrato
 {
 public:
-     Vibrato();
-    ~Vibrato();
+    inline  Vibrato();
+    inline ~Vibrato();
     
 public:
     inline void init();

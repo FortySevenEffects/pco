@@ -22,12 +22,4 @@
 
 BEGIN_MCO_CORE_NAMESPACE
 
-Vibrato::Vibrato()
-{
-}
-
-Vibrato::~Vibrato()
-{
-}
-
 END_MCO_CORE_NAMESPACE

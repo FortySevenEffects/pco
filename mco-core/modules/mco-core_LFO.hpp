@@ -22,13 +22,18 @@
 
 BEGIN_MCO_CORE_NAMESPACE
 
+inline LFO::LFO()
+{
+}
+
+inline LFO::~LFO()
+{
+}
+
+// -----------------------------------------------------------------------------
+
 inline void LFO::init()
 {
-    // mWaveform = Sine;        // Already init'd to zero at boot time.
-    // mPhase = 0;              // Already init'd to zero at boot time.
-    // mBufferedPhase = 0;      // Already init'd to zero at boot time.
-
-    mPhaseIncrement = 1;
     setFrequency(8000);
 }
 
