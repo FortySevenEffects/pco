@@ -38,16 +38,11 @@ inline SpiInterface<Traits>::~SpiInterface()
 template<class Traits>
 inline void SpiInterface<Traits>::init()
 {
-    // Enable pull-ups on input to avoid listening to air wires.
-    Traits::MosiPin::setInput(true);
-    Traits::SckPin::setInput(true);
-    Traits::SsPin::setInput(true);
-    
-    Traits::SlaveSelectInterrupt::init();
-    Traits::SlaveSelectInterrupt::enable();
-
-    // Init SPI state according to SlaveSelect pin.
-    handleSlaveSelect();
+    Traits::MisoPin::setOutput();
+    Traits::MosiPin::setInput();
+    Traits::SckPin::setInput();
+    Traits::SsPin::setInput(true); // Active low
+    Super::open();
 }
 
 // -----------------------------------------------------------------------------
@@ -70,16 +65,12 @@ inline void SpiInterface<Traits>::parse(byte inData)
     if (mIndex == 0)
     {
         // Start a new message
-        if (inData & 0x80)
+        if (mco_common::MessageStatus::isValidStatus(inData))
         {
             // Status byte
             mMessage[0] = inData;
             mIndex = 1;
             mLength = mco_common::MessageStatus::getLength(inData);
-        }
-        else
-        {
-            // Data byte, implement running status if needed.
         }
     }
     else
@@ -87,7 +78,7 @@ inline void SpiInterface<Traits>::parse(byte inData)
         mMessage[mIndex++] = inData;
     }
 
-    if (mIndex == mLength)
+    if (mLength != 0 && mIndex == mLength)
     {
         dispatch();
         mIndex = 0;
@@ -97,19 +88,10 @@ inline void SpiInterface<Traits>::parse(byte inData)
 // -----------------------------------------------------------------------------
 
 template<class Traits>
-inline void SpiInterface<Traits>::handleSlaveSelect()
+inline void SpiInterface<Traits>::handleByteReceived()
 {
     const bool slaveSelected = !Traits::SsPin::read(); // Active low
-    if (slaveSelected) // Active low
-    {
-        Traits::MisoPin::setOutput();
-        Super::open();
-    }
-    else
-    {
-        Traits::MisoPin::setInput();
-        Super::close();
-    }
+    Super::handleByteReceived(slaveSelected);
 }
 
 // -----------------------------------------------------------------------------

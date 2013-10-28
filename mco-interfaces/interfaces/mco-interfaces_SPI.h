@@ -34,7 +34,6 @@ BEGIN_MCO_INTERFACES_NAMESPACE
  * typedef ak47::Pin MisoPin                    SPI Pin
  * typedef ak47::Pin SckPin                     SPI Pin
  * typedef ak47::Pin SsPin                      SPI Pin
- * typedef ak47::PCINT SlaveSelectInterrupt
  */
 template<class Traits>
 class SpiInterface
@@ -51,14 +50,14 @@ public:
 public:
     inline void init();
     inline void read();
-    
+
 private:
     inline void parse(byte inData);
     inline void dispatch();
-    
+
 public:
-    inline void handleSlaveSelect();
-    
+    inline void handleByteReceived();
+
 private:
     Engine& mEngine;
     byte mMessage[mco_common::MessageStatus::sMaxMessageSize];
