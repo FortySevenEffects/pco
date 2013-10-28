@@ -36,6 +36,9 @@ append(mco-core_SOURCES
     modules/mco-core_LFO.cpp
     modules/mco-core_LFO.hpp
     modules/mco-core_LFO.h
+    modules/mco-core_Envelope.cpp
+    modules/mco-core_Envelope.hpp
+    modules/mco-core_Envelope.h
     modules/mco-core_Vibrato.cpp
     modules/mco-core_Vibrato.hpp
     modules/mco-core_Vibrato.h
