@@ -33,8 +33,6 @@ struct Flags
         // Flags for General Purpose Register 0
 
           ClockRefresh          = 0
-        , PwmEnabled            = 1
-        , VibratoEnabled        = 2
         , PortamentoEnabled     = 3
         , PortamentoActive      = 4
 
