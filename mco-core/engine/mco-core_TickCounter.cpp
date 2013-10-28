@@ -18,7 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "modules/mco-core_TickCounter.h"
+#include "engine/mco-core_TickCounter.h"
 
 BEGIN_MCO_CORE_NAMESPACE
 
