@@ -18,7 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "modules/mco-core_Mappers.h"
+#include "engine/mco-core_Mappers.h"
 
 BEGIN_MCO_CORE_NAMESPACE
 

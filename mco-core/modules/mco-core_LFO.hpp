@@ -59,7 +59,7 @@ inline void LFO<Mapper>::process(ModSample& outSample)
 template<class Mapper>
 inline void LFO<Mapper>::reset()
 {
-    Module::resetTickCounter();
+    resetTickCounter();
     mPhase = 0;
 }
 
