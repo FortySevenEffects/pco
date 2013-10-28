@@ -26,6 +26,9 @@ append(mco-core_SOURCES
     engine/mco-core_TickCounter.cpp
     engine/mco-core_TickCounter.hpp
     engine/mco-core_TickCounter.h
+    engine/mco-core_Mappers.cpp
+    engine/mco-core_Mappers.hpp
+    engine/mco-core_Mappers.h
 
     modules/mco-core_Portamento.cpp
     modules/mco-core_Portamento.hpp

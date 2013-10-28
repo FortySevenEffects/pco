@@ -31,6 +31,7 @@ inline McoModel<Traits>::ScopedSlaveSelector::ScopedSlaveSelector()
 template<class Traits>
 inline McoModel<Traits>::ScopedSlaveSelector::~ScopedSlaveSelector()
 {
+    Traits::SpiInterface::waitForEndOfTransmission();
     Traits::SlaveSelectPin::set();
 }
 
@@ -59,7 +60,7 @@ inline void McoModel<Traits>::init()
 // -----------------------------------------------------------------------------
 
 template<class Traits>
-inline void McoModel<Traits>::setPitch(mco_core::Pitch& inPitch)
+inline void McoModel<Traits>::setPitch(const mco_core::Pitch& inPitch)
 {
     ScopedSlaveSelector selector;
     mInterface.send(mco_common::MessageStatus::FineNote);
@@ -68,12 +69,87 @@ inline void McoModel<Traits>::setPitch(mco_core::Pitch& inPitch)
 }
 
 template<class Traits>
-inline void McoModel<Traits>::setDetune(mco_core::Pitch& inPitch)
+inline void McoModel<Traits>::setDetune(const mco_core::Pitch& inPitch)
 {
     ScopedSlaveSelector selector;
     mInterface.send(mco_common::MessageStatus::GlobalDetune);
     mInterface.send(inPitch.semitones);
     mInterface.send(inPitch.cents);
+}
+
+// -----------------------------------------------------------------------------
+
+template<class Traits>
+inline void McoModel<Traits>::setPortamentoAmount(unsigned inAmount)
+{
+    ScopedSlaveSelector selector;
+    mInterface.send(mco_common::MessageStatus::PortamentoAmount);
+    mInterface.send(inAmount >> 7);
+    mInterface.send(inAmount & 0x7f);
+}
+
+template<class Traits>
+inline void McoModel<Traits>::setPortamentoMode(byte inMode)
+{
+    ScopedSlaveSelector selector;
+    mInterface.send(mco_common::MessageStatus::PortamentoMode);
+    mInterface.send(inMode);
+}
+
+// -----------------------------------------------------------------------------
+
+template<class Traits>
+inline void McoModel<Traits>::setVibratoSpeed(unsigned inSpeed)
+{
+    ScopedSlaveSelector selector;
+    mInterface.send(mco_common::MessageStatus::VibratoSpeed);
+    mInterface.send(inSpeed >> 7);
+    mInterface.send(inSpeed & 0x7f);
+}
+
+template<class Traits>
+inline void McoModel<Traits>::setVibratoAmount(unsigned inAmount)
+{
+    ScopedSlaveSelector selector;
+    mInterface.send(mco_common::MessageStatus::VibratoAmount);
+    mInterface.send(inAmount >> 7);
+    mInterface.send(inAmount & 0x7f);
+}
+
+template<class Traits>
+inline void McoModel<Traits>::setVibratoWaveform(byte inWaveform)
+{
+    ScopedSlaveSelector selector;
+    mInterface.send(mco_common::MessageStatus::VibratoWaveform);
+    mInterface.send(inWaveform);
+}
+
+// -----------------------------------------------------------------------------
+
+template<class Traits>
+inline void McoModel<Traits>::setPwmSpeed(unsigned inSpeed)
+{
+    ScopedSlaveSelector selector;
+    mInterface.send(mco_common::MessageStatus::PwmSpeed);
+    mInterface.send(inSpeed >> 7);
+    mInterface.send(inSpeed & 0x7f);
+}
+
+template<class Traits>
+inline void McoModel<Traits>::setPwmAmount(unsigned inAmount)
+{
+    ScopedSlaveSelector selector;
+    mInterface.send(mco_common::MessageStatus::PwmAmount);
+    mInterface.send(inAmount >> 7);
+    mInterface.send(inAmount & 0x7f);
+}
+
+template<class Traits>
+inline void McoModel<Traits>::setPwmWaveform(byte inWaveform)
+{
+    ScopedSlaveSelector selector;
+    mInterface.send(mco_common::MessageStatus::PwmWaveform);
+    mInterface.send(inWaveform);
 }
 
 // -----------------------------------------------------------------------------

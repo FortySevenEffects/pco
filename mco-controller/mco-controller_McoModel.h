@@ -44,8 +44,19 @@ public:
     inline void init();
 
 public:
-    inline void setPitch(mco_core::Pitch& inPitch);
-    inline void setDetune(mco_core::Pitch& inPitch);
+    inline void setPitch(const mco_core::Pitch& inPitch);
+    inline void setDetune(const mco_core::Pitch& inPitch);
+
+    inline void setPortamentoAmount(unsigned inAmount);
+    inline void setPortamentoMode(byte inMode);
+
+    inline void setVibratoSpeed(unsigned inSpeed);
+    inline void setVibratoAmount(unsigned inAmount);
+    inline void setVibratoWaveform(byte inWaveform);
+
+    inline void setPwmSpeed(unsigned inSpeed);
+    inline void setPwmAmount(unsigned inAmount);
+    inline void setPwmWaveform(byte inWaveform);
 
 public:
     inline void sendBoolParameter(mco_common::MessageStatus::Status inMessage);
