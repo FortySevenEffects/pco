@@ -40,7 +40,7 @@ inline void Vibrato::init()
 
 inline void Vibrato::process(Pitch& ioPitch)
 {
-    if (flagbox::isSet<Flags::VibratoEnabled>())
+    if (mAmount != 0)
     {
         ModSample sample = 0;
         mLFO.process(sample);
@@ -57,10 +57,7 @@ inline void Vibrato::reset()
 
 inline void Vibrato::tick()
 {
-    if (flagbox::isSet<Flags::VibratoEnabled>())
-    {
-        mLFO.tick();
-    }
+    mLFO.tick();
 }
 
 // -----------------------------------------------------------------------------

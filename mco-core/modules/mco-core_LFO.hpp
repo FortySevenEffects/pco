@@ -22,24 +22,28 @@
 
 BEGIN_MCO_CORE_NAMESPACE
 
-inline LFO::LFO()
+template<class Mapper>
+inline LFO<Mapper>::LFO()
 {
 }
 
-inline LFO::~LFO()
+template<class Mapper>
+inline LFO<Mapper>::~LFO()
 {
 }
 
 // -----------------------------------------------------------------------------
 
-inline void LFO::init()
+template<class Mapper>
+inline void LFO<Mapper>::init()
 {
     setFrequency(8000);
 }
 
-inline void LFO::process(ModSample& outSample)
+template<class Mapper>
+inline void LFO<Mapper>::process(ModSample& outSample)
 {
-    mBufferedPhase = mPhase;
+    updatePhase();
     switch (mWaveform)
     {
         case Sine:      generateSine(outSample);        break;
@@ -52,43 +56,36 @@ inline void LFO::process(ModSample& outSample)
     }
 }
 
-inline void LFO::reset()
+template<class Mapper>
+inline void LFO<Mapper>::reset()
 {
+    Module::resetTickCounter();
     mPhase = 0;
-}
-
-inline void LFO::tick()
-{   
-    mPrescaleCounter++;
-    if (mPrescaleCounter >= mPrescaleThreshold)
-    {
-        mPhase += mPhaseIncrement;
-        mPrescaleCounter = 0;
-    }
 }
 
 // -----------------------------------------------------------------------------
 
-inline void LFO::setWaveform(byte inWaveform)
+template<class Mapper>
+inline void LFO<Mapper>::setWaveform(byte inWaveform)
 {
     mWaveform = inWaveform % numWaveforms;
 }
 
-inline void LFO::setFrequency(Frequency inFrequency)
+template<class Mapper>
+inline void LFO<Mapper>::setFrequency(Frequency inFrequency)
 {
-    const uint8 index   = inFrequency >> 7;
-    const uint8 amount  = inFrequency & 0x7f;
-    const uint16 logA   = LookupTables::getLog(index);
-    const uint16 logB   = LookupTables::getLog(index + 1);
-    
-    const uint16 value  = interpol(logA, logB, amount);
-    mPrescaleThreshold  = 256;
-    mPhaseIncrement     = value;
+    static const Phase phaseMax = 0xffff;
+    static const FixedPointFreq tickFreq = sTickFrequency * 1000;
+
+    const FixedPointFreq freq = Mapper::map(inFrequency);
+    const uint16 numTicksPerPeriod = tickFreq / freq;
+    mPhaseIncrement = phaseMax / numTicksPerPeriod;
 }
 
 // -----------------------------------------------------------------------------
 
-inline void LFO::generateSine(ModSample& outSample)
+template<class Mapper>
+inline void LFO<Mapper>::generateSine(ModSample& outSample)
 {
     // 256 points for half wave -> 512 points for full wave
     // use overflow for index
@@ -97,33 +94,47 @@ inline void LFO::generateSine(ModSample& outSample)
     // Index    0                      255 0                      255
     // Factor   1                        1 -1                      -1
     
-    const uint8 index = mBufferedPhase >> 7;
-    const uint7 alpha = mBufferedPhase & 0x7f;
+    const uint8 index = mPhase >> 7;
+    const uint7 alpha = mPhase & 0x7f;
     const int16 sampleA = LookupTables::getHalfSine(index);
     const int16 sampleB = LookupTables::getHalfSine(index + 1);
-    const int16 sign = (mBufferedPhase & 0x8000) ? -1 : 1;
+    const int16 sign = (mPhase & 0x8000) ? -1 : 1;
     outSample = sign * interpol(sampleA, sampleB, alpha);
 }
 
-inline void LFO::generateSquare(ModSample& outSample)
+template<class Mapper>
+inline void LFO<Mapper>::generateSquare(ModSample& outSample)
 {
-    outSample = (mBufferedPhase & 0x8000) ? sModSampleMax : sModSampleMin;
+    outSample = (mPhase & 0x8000) ? sModSampleMax : sModSampleMin;
 }
 
-inline void LFO::generateSaw(ModSample& outSample)
+template<class Mapper>
+inline void LFO<Mapper>::generateSaw(ModSample& outSample)
 {
-    outSample = sModSampleMax - mBufferedPhase;
+    outSample = sModSampleMax - mPhase;
 }
 
-inline void LFO::generateRamp(ModSample& outSample)
+template<class Mapper>
+inline void LFO<Mapper>::generateRamp(ModSample& outSample)
 {
-    outSample = sModSampleMin + mBufferedPhase;
+    outSample = sModSampleMin + mPhase;
 }
 
-inline void LFO::generateTriangle(ModSample& outSample)
+template<class Mapper>
+inline void LFO<Mapper>::generateTriangle(ModSample& outSample)
 {
-    outSample = (mBufferedPhase & 0x8000) ? sModSampleMax - (2 * (mBufferedPhase & 0x7fff))
-                                          : sModSampleMin + 2 * mBufferedPhase;
+    outSample = (mPhase & 0x8000) ? sModSampleMax - (2 * (mPhase & 0x7fff))
+                                  : sModSampleMin + 2 * mPhase;
+}
+
+// -----------------------------------------------------------------------------
+
+template<class Mapper>
+inline void LFO<Mapper>::updatePhase()
+{
+    TickCount ticks = 0;
+    fetchTickCounter(ticks);
+    mPhase += ticks * mPhaseIncrement;
 }
 
 END_MCO_CORE_NAMESPACE

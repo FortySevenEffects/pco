@@ -45,10 +45,13 @@ inline void PWM<Timer>::init()
 template<class Timer>
 inline void PWM<Timer>::process()
 {
-    ModSample sample = 0;
-    mLFO.process(sample);
-    int32 amount = (int32(sample) * int32(mAmount)) >> (sAmountShift + 1);
-    mTimer.setPulseWidth(amount);
+    if (mAmount != 0)
+    {
+        ModSample sample = 0;
+        mLFO.process(sample);
+        int32 amount = (int32(sample) * int32(mAmount)) >> (sAmountShift + 1);
+        mTimer.setPulseWidth(amount);    
+    }
 }
 
 template<class Timer>

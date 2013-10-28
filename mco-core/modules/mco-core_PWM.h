@@ -23,6 +23,7 @@
 #include "mco-core.h"
 #include "engine/mco-core_Math.h"
 #include "engine/mco-core_FlagBox.h"
+#include "engine/mco-core_Mappers.h"
 #include "modules/mco-core_LFO.h"
 
 BEGIN_MCO_CORE_NAMESPACE
@@ -49,10 +50,13 @@ public:
     inline void setWaveform(byte inWaveform);
 
 private:
+    typedef LinearMapper<FixedPointFreq, 1000, 8000> SpeedMapper;
+    typedef LFO<SpeedMapper> PwmLfo;
+
     Timer& mTimer;
     RelativeLevel mBaseLevel;
     Amount mAmount;
-    LFO mLFO;
+    PwmLfo mLFO;
 };
 
 END_MCO_CORE_NAMESPACE

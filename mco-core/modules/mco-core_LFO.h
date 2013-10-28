@@ -22,13 +22,15 @@
 
 #include "mco-core.h"
 #include "mco-core_Defs.h"
+#include "engine/mco-core_TickCounter.h"
 #include "engine/mco-core_Math.h"
 #include "engine/mco-core_Tables.h"
 #include <avr/io.h>
 
 BEGIN_MCO_CORE_NAMESPACE
 
-class LFO
+template<class Mapper>
+class LFO : public TickCounter
 {
 public:
     enum
@@ -50,7 +52,6 @@ public:
     inline void init();
     inline void process(ModSample& outSample);
     inline void reset();
-    inline void tick();
     
 public:
     inline void setFrequency(Frequency inFrequency);
@@ -64,11 +65,11 @@ private:
     inline void generateTriangle(ModSample& outSample);
     
 private:
-    volatile Phase mPhase;
-    volatile Phase mPrescaleCounter;
-    Phase mPrescaleThreshold;
+    inline void updatePhase();
+
+private:
+    Phase mPhase;
     Phase mPhaseIncrement;
-    Phase mBufferedPhase;
     byte mWaveform;
 };
 

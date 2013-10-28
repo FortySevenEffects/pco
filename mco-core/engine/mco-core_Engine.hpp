@@ -54,7 +54,7 @@ inline void Engine<Traits>::init()
     mVibrato.init();
     mPWM.init();
     
-    // Activate tick for modules
+    // Activate tick for modules - Match defs in mco-core_Defs.h
     TickTimer::enableInterruptOverflow();
     TickTimer::start(TickTimer::prescale1);
 

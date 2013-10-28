@@ -41,9 +41,10 @@ static const uint8 sAmountShift = 14;
 
 // -----------------------------------------------------------------------------
 
-typedef uint14  Frequency;
+typedef Amount  Frequency;          // Amount passed to FrequencyMapper
 typedef uint16  Phase;
-typedef int16   ModSample;  // Modulation sample
+typedef int16   ModSample;          // Modulation sample
+typedef uint32  FixedPointFreq;     // Fixed point frequency, 1 = 0.001 Hz
 
 // -----------------------------------------------------------------------------
 
@@ -54,5 +55,12 @@ static const uint8 sPulseWidthShift = 15;
 
 static const ModSample sModSampleMax = 32767;
 static const ModSample sModSampleMin = -1 * sModSampleMax;
+
+// -----------------------------------------------------------------------------
+
+// Match tick timer settings here
+static const uint32 sTickPrescale   = 8;
+static const uint32 sTickTimerWidth = 256;
+static const uint32 sTickFrequency = F_CPU / (sTickPrescale * sTickTimerWidth);
 
 END_MCO_CORE_NAMESPACE

@@ -1,7 +1,7 @@
 /*!
- *  \file       mco-core_Vibrato.h
+ *  \file       mco-core_TickCounter.h
  *  \author     Francois Best
- *  \date       11/02/2013
+ *  \date       27/10/2013
  *  \license    GPL v3.0 - Copyright Forty Seven Effects 2013
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -21,39 +21,28 @@
 #pragma once
 
 #include "mco-core.h"
-#include "engine/mco-core_Math.h"
-#include "engine/mco-core_Pitch.h"
-#include "engine/mco-core_FlagBox.h"
-#include "engine/mco-core_Mappers.h"
-#include "modules/mco-core_LFO.h"
+#include <interrupts/ak47_Atomic.h>
 
 BEGIN_MCO_CORE_NAMESPACE
 
-class Vibrato
+class TickCounter
 {
 public:
-    inline  Vibrato();
-    inline ~Vibrato();
-    
-public:
-    inline void init();
-    inline void process(Pitch& ioPitch);
-    inline void reset();
-    inline void tick();
-    
-public:
-    inline void setAmount(Amount inAmount);
-    inline void setSpeed(Frequency inSpeed);
-    inline void setWaveform(byte inWaveform);
-    
-private:
-    typedef LinearMapper<FixedPointFreq, 1000, 8000> SpeedMapper;
-    typedef LFO<SpeedMapper> VibratoLfo;
+    typedef uint16 TickCount;
 
-    Amount      mAmount;
-    VibratoLfo  mLFO;
+public:
+    inline  TickCounter();
+    inline ~TickCounter();
+
+public:
+    inline void tick();
+    inline void fetchTickCounter(TickCount& outCount);
+    inline void resetTickCounter();
+
+private:
+    volatile TickCount mCount;
 };
 
 END_MCO_CORE_NAMESPACE
 
-#include "modules/mco-core_Vibrato.hpp"
+#include "modules/mco-core_TickCounter.hpp"

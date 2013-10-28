@@ -23,7 +23,10 @@ append(mco-core_SOURCES
     engine/mco-core_FlagBox.cpp
     engine/mco-core_FlagBox.hpp
     engine/mco-core_FlagBox.h
-    
+    engine/mco-core_TickCounter.cpp
+    engine/mco-core_TickCounter.hpp
+    engine/mco-core_TickCounter.h
+
     modules/mco-core_Portamento.cpp
     modules/mco-core_Portamento.hpp
     modules/mco-core_Portamento.h
