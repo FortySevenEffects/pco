@@ -48,16 +48,21 @@ struct MessageStatus
         , DisableSync       = 0x90  // Status only
         , EnablePortamento  = 0x91  // Status only
         , DisablePortamento = 0x92  // Status only
-        , EnableVibrato     = 0x93  // Status only
-        , DisableVibrato    = 0x94  // Status only
-        , EnablePwm         = 0x95  // Status only
-        , DisablePwm        = 0x96  // Status only
+        , Mute              = 0x93  // Status only
+        , Unmute            = 0x94  // Status only
+        , ResetPhase        = 0x95  // Status only
 
+        , lastAddressedStatus
         , MaximumStatus     = 0xFF
     };
     
     typedef unsigned char Status;
     
+    static inline bool isValidStatus(Status inStatus)
+    {
+        return inStatus >= 0x80 && inStatus < lastAddressedStatus;
+    }
+
     static const unsigned char sMaxMessageSize = 3;
     static inline unsigned char getLength(Status inStatus)
     {
