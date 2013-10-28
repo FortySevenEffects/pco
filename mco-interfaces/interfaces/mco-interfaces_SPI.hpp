@@ -167,12 +167,6 @@ void SpiInterface<Traits>::dispatch()
         case MessageStatus::VibratoWaveform:
             mEngine.mVibrato.setWaveform(mMessage[1]);
             break;
-        //case MessageStatus::EnableVibrato:
-        //    flagbox::set<Flags::VibratoEnabled>();
-        //    break;
-        //case MessageStatus::DisableVibrato:
-        //    flagbox::clear<Flags::VibratoEnabled>();
-        //    break;
 
         // ---------------------------------------------------------------------
 
@@ -188,14 +182,20 @@ void SpiInterface<Traits>::dispatch()
         case MessageStatus::PwmWaveform:
             mEngine.mPWM.setWaveform(mMessage[1]);
             break;
-        //case MessageStatus::EnablePwm:
-        //    flagbox::set<Flags::PwmEnabled>();
-        //    break;
-        //case MessageStatus::DisablePwm:
-        //    flagbox::clear<Flags::PwmEnabled>();
-        //    break;
 
         // ---------------------------------------------------------------------
+
+        case MessageStatus::Mute:
+            mEngine.mute();
+            break;
+
+        case MessageStatus::Unmute:
+            mEngine.unmute();
+            break;
+
+        case MessageStatus::ResetPhase:
+            mEngine.handleSyncPulse();
+            break;
 
         default:
             break;
