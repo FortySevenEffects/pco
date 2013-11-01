@@ -102,9 +102,9 @@ class McoControlSection(QWidget):
         vibratoLayout = QFormLayout()
         vibratoGroup.setLayout(vibratoLayout)
         
-        vibratoOnOff = QCheckBox(vibratoGroup)
-        vibratoOnOff.toggled.connect(controller.sendEnableVibrato)
-        vibratoLayout.addRow("On/Off", vibratoOnOff)
+        # vibratoOnOff = QCheckBox(vibratoGroup)
+        # vibratoOnOff.toggled.connect(controller.sendEnableVibrato)
+        # vibratoLayout.addRow("On/Off", vibratoOnOff)
         
         vibratoSpeed = ContinuousControlView(vibratoGroup)
         vibratoSpeed.setRange(0, 0x3fff, 1)
@@ -133,9 +133,9 @@ class McoControlSection(QWidget):
         pwmLayout = QFormLayout()
         pwmGroup.setLayout(pwmLayout)
         
-        pwmOnOff = QCheckBox(pwmGroup)
-        pwmOnOff.toggled.connect(controller.sendEnablePwm)
-        pwmLayout.addRow("On/Off", pwmOnOff)
+        # pwmOnOff = QCheckBox(pwmGroup)
+        # pwmOnOff.toggled.connect(controller.sendEnablePwm)
+        # pwmLayout.addRow("On/Off", pwmOnOff)
         
         pwmBaseLevel = ContinuousControlView(pwmGroup)
         pwmBaseLevel.setRange(-32767, 32767, 1)
