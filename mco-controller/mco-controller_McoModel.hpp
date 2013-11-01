@@ -71,10 +71,11 @@ inline void McoModel<Traits>::setPitch(const mco_core::Pitch& inPitch)
 template<class Traits>
 inline void McoModel<Traits>::setDetune(const mco_core::Pitch& inPitch)
 {
+    const int16 data = inPitch.semitones * 100 + inPitch.cents;
     ScopedSlaveSelector selector;
     mInterface.send(mco_common::MessageStatus::GlobalDetune);
-    mInterface.send(inPitch.semitones);
-    mInterface.send(inPitch.cents);
+    mInterface.send((data >> 7) & 0x7f);
+    mInterface.send(data & 0x7f);
 }
 
 // -----------------------------------------------------------------------------

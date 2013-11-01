@@ -37,6 +37,7 @@ struct Pitch
     
     inline Pitch& operator=(const Pitch& inPitch);
     inline Pitch& operator+=(const Pitch& inPitch);
+    inline Pitch& operator-=(const Pitch& inPitch);
     
     inline FlatPitch flatten() const;
     inline void computeRange();
@@ -44,10 +45,10 @@ struct Pitch
     
     Semitones semitones;
     Cents cents;
-    /*
-private: // Disallow copy construction
-    inline Pitch(const Pitch& inOther);*/
 };
+
+inline Pitch operator+(const Pitch& inA, const Pitch& inB);
+inline Pitch operator-(const Pitch& inA, const Pitch& inB);
 
 END_MCO_CORE_NAMESPACE
 
