@@ -57,6 +57,14 @@ inline Pitch& Pitch::operator+=(const Pitch& inPitch)
     return *this;
 }
 
+inline Pitch& Pitch::operator-=(const Pitch& inPitch)
+{
+    semitones -= inPitch.semitones;
+    cents -= inPitch.cents;
+    computeRange();
+    return *this;
+}
+
 // -----------------------------------------------------------------------------
 
 inline Pitch::FlatPitch Pitch::flatten() const
@@ -85,6 +93,24 @@ inline void Pitch::limit()
     {
         semitones = 0;
     }
+}
+
+// -----------------------------------------------------------------------------
+
+inline Pitch operator+(const Pitch& inA, const Pitch& inB)
+{
+    Pitch out(inA);
+    out += inB;
+    out.computeRange();
+    return out;
+}
+
+inline Pitch operator-(const Pitch& inA, const Pitch& inB)
+{
+    Pitch out(inA);
+    out -= inB;
+    out.computeRange();
+    return out;
 }
 
 END_MCO_CORE_NAMESPACE
