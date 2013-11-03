@@ -32,6 +32,7 @@ struct LookupTables
     static byte   getPrescaleShift(byte inIndex);
     static int16  getHalfSine(byte inIndex);
     static uint16 getLog(byte inIndex);
+    static uint16 getExpDischarge(byte inIndex);
     static uint16 getSlope(byte inIndex);
 };
 

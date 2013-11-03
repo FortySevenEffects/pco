@@ -21,7 +21,7 @@
 #pragma once
 
 BEGIN_MCO_CORE_NAMESPACE
-
+/*
 inline AdsrEnvelope::AdsrEnvelope()
 {
 }
@@ -36,13 +36,18 @@ inline void AdsrEnvelope::init()
 {
     setAttack(0);
     setDecay(0);
-    setSustain(sModSampleMax);
+    setSustain(sUModSampleMax);
     setRelease(0);
 }
 
-inline void AdsrEnvelope::process(ModSample& outSample)
+inline void AdsrEnvelope::process(Sample& outSample)
 {
-    mBufferedPhase = mPhase;
+    const bool overflow = updatePhase();
+    if (overflow)
+    {
+        // go to next state
+    }
+
     switch (mState)
     {
         default:
@@ -70,18 +75,6 @@ inline void AdsrEnvelope::gateOff()
 
 // -----------------------------------------------------------------------------
 
-inline void AdsrEnvelope::tick()
-{
-    mPrescaleCounter++;
-    if (mPrescaleCounter >= mPrescaleThreshold)
-    {
-        mPhase += mPhaseIncrement;
-        mPrescaleCounter = 0;
-    }
-}
-
-// -----------------------------------------------------------------------------
-
 inline void AdsrEnvelope::setAttack(Attack inAttack)
 {
     // \todo Compute time constant and phase incr here.
@@ -92,9 +85,9 @@ inline void AdsrEnvelope::setDecay(Decay inDecay)
     // \todo Compute time constant and phase incr here.
 }
 
-inline void AdsrEnvelope::setSustain(Sustain inSustain)
+inline void AdsrEnvelope::setSustain(Sustain inLevel)
 {
-    mSustain = inSustain;
+    mSustainLevel = inSustain;
 }
 
 inline void AdsrEnvelope::setRelease(Release inRelease)
@@ -104,30 +97,46 @@ inline void AdsrEnvelope::setRelease(Release inRelease)
 
 // -----------------------------------------------------------------------------
 
-inline void AdsrEnvelope::processAttack(ModSample& outSample)
+inline bool AdsrEnvelope::updatePhase()
 {
-    if (mCurrentValue == sModSampleMax)
+    TickCount ticks = 0;
+    fetchTickCounter(ticks);
+    const Phase increment = ticks * mPhaseIncrement;
+    if (increment > (0xffff - mPhase))
+    {
+        // Increment will overflow
+        mPhase = 0;
+        return true;
+    }
+
+    mPhase += increment;
+    return false;
+}
+
+inline void AdsrEnvelope::processAttack(Sample& outSample)
+{
+    if (mCurrentValue == sUModSampleMax)
     {
         mState = decay;
         processDecay(outSample);
         return;
     }
 
-    // \todo Implement me.
+    return mPhase; // Linear output
 }
 
-inline void AdsrEnvelope::processDecay(ModSample& outSample)
+inline void AdsrEnvelope::processDecay(Sample& outSample)
 {
-    // \todo Implement me.
+
 }
 
-inline void AdsrEnvelope::processSustain(ModSample& outSample)
+inline void AdsrEnvelope::processSustain(Sample& outSample)
 {
-    mCurrentValue = mSustain;
+    mCurrentValue = mSustainLevel;
     outSample = mCurrentValue;
 }
 
-inline void AdsrEnvelope::processRelease(ModSample& outSample)
+inline void AdsrEnvelope::processRelease(Sample& outSample)
 {
     if (mCurrentValue == 0)
     {
@@ -136,6 +145,98 @@ inline void AdsrEnvelope::processRelease(ModSample& outSample)
     }
 
     // \todo Implement me.
+}
+*/
+
+// ########################################################################## //
+
+inline DecayEnvelope::DecayEnvelope()
+{
+}
+
+inline DecayEnvelope::~DecayEnvelope()
+{
+}
+
+// -----------------------------------------------------------------------------
+
+inline void DecayEnvelope::init()
+{
+}
+
+inline void DecayEnvelope::process(Sample& outSample)
+{
+    if (mProcessing)
+    {
+        if (updatePhase())
+        {
+            // Phase overflow: reached the end of decay time.
+            mProcessing = false;
+            return;
+        }
+
+        const Sample sampleLin = processLinear();
+        const Sample sampleExp = processExponential();
+
+        // Blend
+        outSample = interpol_s(sampleExp, sampleLin, mLinearity);
+    }
+}
+
+inline void DecayEnvelope::trigger()
+{
+    mProcessing = true;
+    mPhase = 0;
+    resetTickCounter();
+}
+
+inline void DecayEnvelope::setDecay(Decay inDecay)
+{
+    mPhaseIncrement = 0xffff - inDecay;
+}
+
+inline void DecayEnvelope::setLinearity(LinearityAmount inAmount)
+{
+    mLinearity = inAmount;
+}
+
+// -----------------------------------------------------------------------------
+
+inline bool DecayEnvelope::isActive() const
+{
+    return mProcessing;
+}
+
+// -----------------------------------------------------------------------------
+
+inline bool DecayEnvelope::updatePhase()
+{
+    TickCount ticks = 0;
+    fetchTickCounter(ticks);
+    const uint32 increment = ticks * mPhaseIncrement;
+    if (increment > uint32(0xffff - mPhase))
+    {
+        // Increment will overflow
+        mPhase = 0;
+        return true;
+    }
+
+    mPhase += increment;
+    return false;
+}
+
+inline DecayEnvelope::Sample DecayEnvelope::processLinear() const
+{
+    return sUModSampleMax - mPhase;
+}
+
+inline DecayEnvelope::Sample DecayEnvelope::processExponential() const
+{
+    const uint7 index = (mPhase >> 9);          // index range: [0 ; 127]
+    const uint7 alpha = (mPhase >> 2) & 0x7f;   // alpha range: [0 ; 127]
+    const uint16 expA = LookupTables::getExpDischarge(index + 1);
+    const uint16 expB = LookupTables::getExpDischarge(index);
+    return interpol_u(expA, expB, alpha);
 }
 
 END_MCO_CORE_NAMESPACE

@@ -22,21 +22,23 @@
 
 #include "mco-core.h"
 #include "mco-core_Defs.h"
+#include "engine/mco-core_TickCounter.h"
 #include "engine/mco-core_Math.h"
 #include "engine/mco-core_Tables.h"
 
 BEGIN_MCO_CORE_NAMESPACE
-
-class AdsrEnvelope
+/*
+class AdsrEnvelope : public TickCounter
 {
 public:
-    typedef uint14 TimeFactor;
-    typedef TimeFactor Attack;
-    typedef TimeFactor Decay;
-    typedef TimeFactor Release;
-    typedef ModSample  Sustain;
+    typedef UModSample  Sample;
+    typedef uint14      TimeFactor;
+    typedef TimeFactor  Attack;
+    typedef TimeFactor  Decay;
+    typedef TimeFactor  Release;
+    typedef Sample      Sustain;
 
-    enum
+    enum // States
     {
           idle = 0
         , attack
@@ -51,37 +53,67 @@ public:
 
 public:
     inline void init();
-    inline void process(ModSample& outSample);
+    inline void process(Sample& outSample);
     inline void gateOn();
     inline void gateOff();
-    inline void tick();
 
 public:
     inline void setAttack(Attack inAttack);
     inline void setDecay(Decay inDecay);
-    inline void setSustain(Sustain inSustain);
+    inline void setSustain(Sustain inLevel);
     inline void setRelease(Release inRelease);
 
 private:
-    inline void processAttack(ModSample& outSample);
-    inline void processDecay(ModSample& outSample);
-    inline void processSustain(ModSample& outSample);
-    inline void processRelease(ModSample& outSample);
+    inline bool updatePhase();
+    inline void processAttack(Sample& outSample);
+    inline void processDecay(Sample& outSample);
+    inline void processSustain(Sample& outSample);
+    inline void processRelease(Sample& outSample);
 
 private:
-    volatile Phase mPhase;
-    volatile Phase mPrescaleCounter;
-    Phase mPrescaleThreshold;
-    Phase mPhaseIncrement;
-    Phase mBufferedPhase;
-
-    Attack mAttack;
-    Decay mDecay;
-    Sustain mSustain;
-    Release mRelease;
+    Sustain mSustainLevel;
 
     byte mState;
-    ModSample mCurrentValue;
+    Sample mCurrentValue;
+
+    Phase mPhase;
+    Phase mCurrentPhaseIncrement;
+};
+*/
+// -----------------------------------------------------------------------------
+
+class DecayEnvelope : public TickCounter
+{
+public:
+    typedef UModSample  Sample;
+    typedef uint14      TimeFactor;
+    typedef TimeFactor  Decay;
+    typedef byte        LinearityAmount;
+
+public:
+    inline  DecayEnvelope();
+    inline ~DecayEnvelope();
+
+public:
+    inline void init();
+    inline void process(Sample& outSample);
+    inline void trigger();
+    inline void setDecay(Decay inDecay);
+    inline void setLinearity(LinearityAmount inAmount);
+
+public:
+    inline bool isActive() const;
+
+private:
+    inline bool updatePhase();
+    inline Sample processLinear() const;
+    inline Sample processExponential() const;
+
+private:
+    bool mProcessing;
+    Phase mPhase;
+    Phase mPhaseIncrement;
+    LinearityAmount mLinearity;
 };
 
 END_MCO_CORE_NAMESPACE

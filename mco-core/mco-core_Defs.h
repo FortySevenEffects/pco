@@ -43,7 +43,8 @@ static const uint8 sAmountShift = 14;
 
 typedef Amount  Frequency;          // Amount passed to FrequencyMapper
 typedef uint16  Phase;
-typedef int16   ModSample;          // Modulation sample
+typedef int16   ModSample;          // Modulation sample (bipolar)
+typedef uint16  UModSample;         // Modulation sample (positive only)
 typedef uint32  FixedPointFreq;     // Fixed point frequency, 1 = 0.001 Hz
 
 // -----------------------------------------------------------------------------
@@ -53,8 +54,10 @@ static const uint8 sPulseWidthShift = 15;
 
 // -----------------------------------------------------------------------------
 
-static const ModSample sModSampleMax = 32767;
-static const ModSample sModSampleMin = -1 * sModSampleMax;
+static const ModSample sModSampleMax    = 32767;
+static const ModSample sModSampleMin    = -1 * sModSampleMax;
+static const UModSample sUModSampleMax  = 0xffff;
+static const UModSample sUModSampleMin  = 0;
 
 // -----------------------------------------------------------------------------
 
