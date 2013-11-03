@@ -132,7 +132,7 @@ inline void Portamento::processExponential(Pitch& outPitch)
     const int32 diff = mTargetPitch.flatten() - int32(mOriginPitch.flatten());
     const int32 logA = LookupTables::getLog(index + 1);
     const int32 logB = LookupTables::getLog(index);
-    const int32 logI = interpol(logA, logB, alpha);
+    const int32 logI = interpol_s(logA, logB, alpha);
     const int32 offset = (diff * (0xffff - logI)) >> 16;
     outPitch.cents += offset;
 }
