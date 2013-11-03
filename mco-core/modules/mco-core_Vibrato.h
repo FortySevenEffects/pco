@@ -23,7 +23,6 @@
 #include "mco-core.h"
 #include "engine/mco-core_Math.h"
 #include "engine/mco-core_Pitch.h"
-#include "engine/mco-core_FlagBox.h"
 #include "engine/mco-core_Mappers.h"
 #include "modules/mco-core_LFO.h"
 

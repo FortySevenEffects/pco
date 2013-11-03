@@ -24,7 +24,6 @@
 #include "engine/mco-core_Pitch.h"
 #include "engine/mco-core_Timer.h"
 #include "engine/mco-core_Tables.h"
-#include "engine/mco-core_FlagBox.h"
 #include "modules/mco-core_Portamento.h"
 #include "modules/mco-core_Vibrato.h"
 #include "modules/mco-core_PWM.h"

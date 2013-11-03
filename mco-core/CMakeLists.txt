@@ -20,9 +20,6 @@ append(mco-core_SOURCES
     engine/mco-core_Pitch.cpp
     engine/mco-core_Pitch.hpp
     engine/mco-core_Pitch.h
-    engine/mco-core_FlagBox.cpp
-    engine/mco-core_FlagBox.hpp
-    engine/mco-core_FlagBox.h
     engine/mco-core_TickCounter.cpp
     engine/mco-core_TickCounter.hpp
     engine/mco-core_TickCounter.h

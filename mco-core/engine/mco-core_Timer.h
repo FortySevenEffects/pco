@@ -23,7 +23,6 @@
 #include "mco-core.h"
 #include "mco-core_Defs.h"
 #include "engine/mco-core_Math.h"
-#include "engine/mco-core_FlagBox.h"
 #include <time/ak47_Timer.h>
 
 BEGIN_MCO_CORE_NAMESPACE
@@ -59,6 +58,7 @@ private:
     volatile uint16 mValue;
     volatile byte mPrescale;
     volatile PulseWidth mPulseWidth;
+    volatile bool mRefresh;
 };
 
 END_MCO_CORE_NAMESPACE

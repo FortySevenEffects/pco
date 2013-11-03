@@ -49,7 +49,7 @@ inline void Timer<TimerInterface, OutputInterface>::start()
 {
     TimerInterface::enableInterruptA();     // A: start pulse
     TimerInterface::enableInterruptB();     // B: end pulse
-    flagbox::set<Flags::ClockRefresh>();
+    mRefresh = true;
     recomputeFrequency();
 }
 
@@ -66,25 +66,25 @@ inline void Timer<TimerInterface, OutputInterface>::setTime(byte inPrescale,
 {
     mPrescale = inPrescale;
     mValue    = inValue;
-    flagbox::set<Flags::ClockRefresh>();
+    mRefresh  = true;
 }
 
 template<class TimerInterface, class OutputInterface>
 inline void Timer<TimerInterface, OutputInterface>::setPulseWidth(PulseWidth inPulseWidth)
 {
     mPulseWidth = inPulseWidth;
-    flagbox::set<Flags::ClockRefresh>();
+    mRefresh    = true;
 }
 
 template<class TimerInterface, class OutputInterface>
 inline void Timer<TimerInterface, OutputInterface>::recomputeFrequency()
 {
-    if (flagbox::isSet<Flags::ClockRefresh>())
+    if (mRefresh)
     {
         TimerInterface::setA(mValue);
         setPulseEnd(); 
         TimerInterface::setPrescale(mPrescale);
-        flagbox::clear<Flags::ClockRefresh>();
+        mRefresh = false;
     }
 }
 
@@ -94,7 +94,7 @@ inline void Timer<TimerInterface, OutputInterface>::reset()
     TimerInterface::stop();
     startPulse();
     TimerInterface::reset();
-    flagbox::set<Flags::ClockRefresh>();
+    mRefresh = true;
     recomputeFrequency();
 }
 
