@@ -81,20 +81,20 @@ inline void McoModel<Traits>::setDetune(const mco_core::Pitch& inPitch)
 // -----------------------------------------------------------------------------
 
 template<class Traits>
-inline void McoModel<Traits>::setPortamentoAmount(unsigned inAmount)
+inline void McoModel<Traits>::setPortamentoTime(unsigned inDuration)
 {
     ScopedSlaveSelector selector;
-    mInterface.send(mco_common::MessageStatus::PortamentoAmount);
-    mInterface.send(inAmount >> 7);
-    mInterface.send(inAmount & 0x7f);
+    mInterface.send(mco_common::MessageStatus::PortamentoTime);
+    mInterface.send(inDuration >> 7);
+    mInterface.send(inDuration & 0x7f);
 }
 
 template<class Traits>
-inline void McoModel<Traits>::setPortamentoMode(byte inMode)
+inline void McoModel<Traits>::setPortamentoLinearity(byte inLinearity)
 {
     ScopedSlaveSelector selector;
-    mInterface.send(mco_common::MessageStatus::PortamentoMode);
-    mInterface.send(inMode);
+    mInterface.send(mco_common::MessageStatus::PortamentoLinearity);
+    mInterface.send(inLinearity);
 }
 
 // -----------------------------------------------------------------------------

@@ -61,7 +61,7 @@ inline void Engine<Traits>::init()
 
     sei(); // Activate global interrupts
 
-    mTwang.setDecay(1000);      // 1 second
+    mTwang.setDuration(1000);   // 1 second
     mTwang.setFrequency(1000);  // 1 Hz
     mTwang.setLinearity(0xff);  // Full linear
 }
@@ -185,6 +185,7 @@ inline void Engine<Traits>::handleSystemTick()
     mVibrato.tick();
     mPWM.tick();
     mPortamento.tick();
+    mTwang.tick();
 }
 
 END_MCO_CORE_NAMESPACE

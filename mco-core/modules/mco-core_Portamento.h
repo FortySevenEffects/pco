@@ -21,22 +21,18 @@
 #pragma once
 
 #include "mco-core.h"
-#include "engine/mco-core_Math.h"
 #include "engine/mco-core_Pitch.h"
-#include "engine/mco-core_FlagBox.h"
-#include "engine/mco-core_Tables.h"
+#include "modules/mco-core_Envelope.h"
 
 BEGIN_MCO_CORE_NAMESPACE
 
 class Portamento
 {
 public:
-    enum
-    {
-        Linear      = 0,
-        Exponential = 1,
-    };
-    
+    typedef DecayEnvelope               Envelope;
+    typedef Envelope::LinearityAmount   LinearityAmount;
+    typedef Envelope::TimeFactor        TimeFactor;
+
 public:
     inline Portamento();
     inline ~Portamento();
@@ -50,18 +46,12 @@ public:
     inline void tick();
     
 public:
-    inline void setAmount(Amount inAmount);
-    inline void setMode(byte inMode);
-    inline void setEnabled(bool inEnabled);
+    inline void setDuration(TimeFactor inDuration);
+    inline void setLinearity(LinearityAmount inAmount);
 
 private:
-    inline void processLinear(Pitch& outPitch);
-    inline void processExponential(Pitch& outPitch);
-    
-private:
-    typedef uint16 Phase;
-    Phase mPhase;
-    volatile Phase mPhaseCounter;
+    Envelope mEnvelope;
+
     Pitch mTargetPitch;
     Pitch mOriginPitch;
     uint8 mMode;

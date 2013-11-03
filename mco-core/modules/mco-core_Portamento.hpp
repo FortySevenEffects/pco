@@ -35,7 +35,8 @@ inline Portamento::~Portamento()
 inline void Portamento::init()
 {
     mTargetPitch = Pitch(64, 0);
-    // mMode = Linear
+    mEnvelope.init();
+    setLinearity(0xff);
 }
 
 inline void Portamento::trigger(const Pitch& inTarget)
@@ -43,28 +44,24 @@ inline void Portamento::trigger(const Pitch& inTarget)
     // Note: this will not handle retriggering correctly.
     mOriginPitch = mTargetPitch;
     mTargetPitch = inTarget;
-
-    if (flagbox::isSet<Flags::PortamentoEnabled>())
-    {
-        mPhaseCounter = 0;
-        mPhase        = 0;
-        flagbox::set<Flags::PortamentoActive>();
-    }
+    mEnvelope.trigger();
 }
 
 inline void Portamento::process(Pitch& outPitch)
 {
-    if (flagbox::isSet<Flags::PortamentoActive>())
+    if (mEnvelope.isActive())
     {
-        mPhase = mPhaseCounter; // \todo Lock this operation
-        outPitch = mOriginPitch;
-        switch (mMode)
-        {
-            case Linear:        processLinear(outPitch);        break;
-            case Exponential:   processExponential(outPitch);   break;
-            default:
-                break;
-        }
+        Envelope::Sample sample = 0;
+        mEnvelope.process(sample);
+
+        const int16 originFlat = mOriginPitch.flatten();
+        const int16 targetFlat = mTargetPitch.flatten();
+
+        // Diff is negative when target > origin to account for negative progression of decay envelope.
+        const int16 diff = originFlat - targetFlat;
+        const int16 scaledEnvelope = (int32(sample) * diff) >> 16;
+        const int16 pitchOffset = originFlat + scaledEnvelope;
+        outPitch.cents += pitchOffset;
         outPitch.computeRange();
     }
     else
@@ -77,64 +74,19 @@ inline void Portamento::process(Pitch& outPitch)
 
 inline void Portamento::tick()
 {
-    if (flagbox::isSet<Flags::PortamentoActive>())
-    {
-        // \todo Implement prescale here
-        Phase pre = mPhaseCounter;
-        mPhaseCounter += 4;
-        if (pre > mPhaseCounter)
-        {
-            // Overflow -> disable portamento and lock on target pitch.
-            flagbox::clear<Flags::PortamentoActive>();
-        }
-    }
+    mEnvelope.tick();
 }
 
 // -----------------------------------------------------------------------------
 
-inline void Portamento::setAmount(Amount inAmount)
+inline void Portamento::setDuration(TimeFactor inDuration)
 {
-    // \todo Check what needs to be done when already running, 
-    // like recomputing the slope or anything..
+    mEnvelope.setDuration(inDuration);
 }
 
-inline void Portamento::setMode(byte inMode)
+inline void Portamento::setLinearity(LinearityAmount inAmount)
 {
-    mMode = inMode;
-}
-
-inline void Portamento::setEnabled(bool inEnabled)
-{
-    if (inEnabled)
-    {
-        flagbox::set<Flags::PortamentoEnabled>();
-    }
-    else
-    {
-        flagbox::clear<Flags::PortamentoActive>();
-        flagbox::clear<Flags::PortamentoEnabled>();
-    }
-}
-
-// -----------------------------------------------------------------------------
-
-inline void Portamento::processLinear(Pitch& outPitch)
-{
-    const int32 diff = mTargetPitch.flatten() - int32(mOriginPitch.flatten());
-    const int32 offset = (diff * int32(mPhase)) >> 16;
-    outPitch.cents += offset;
-}
-
-inline void Portamento::processExponential(Pitch& outPitch)
-{
-    const uint7 index = 127 - (mPhase >> 9);    // Index range: [127-0]
-    const uint7 alpha = (mPhase >> 2) & 0x7f;   // \todo this should be reversed.
-    const int32 diff = mTargetPitch.flatten() - int32(mOriginPitch.flatten());
-    const int32 logA = LookupTables::getLog(index + 1);
-    const int32 logB = LookupTables::getLog(index);
-    const int32 logI = interpol_s(logA, logB, alpha);
-    const int32 offset = (diff * (0xffff - logI)) >> 16;
-    outPitch.cents += offset;
+    mEnvelope.setLinearity(inAmount);
 }
 
 END_MCO_CORE_NAMESPACE

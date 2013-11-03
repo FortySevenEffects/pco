@@ -41,13 +41,14 @@ public:
     inline void process(Pitch& ioPitch);
     inline void process(ModSample& ioSample);
     inline void trigger();
+    inline void tick();
 
 public: // Oscillation parameters
     inline void setFrequency(Frequency inFreq);
     inline void setWaveform(byte inWaveform);
 
 public: // Envelope parameters
-    inline void setDecay(DecayEnvelope::Decay inDecay);
+    inline void setDuration(DecayEnvelope::TimeFactor inDecay);
     inline void setLinearity(DecayEnvelope::LinearityAmount inAmount);
 
 private:

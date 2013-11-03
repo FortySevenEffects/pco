@@ -75,6 +75,13 @@ inline void Twang<Traits>::trigger()
     mEnvelope.trigger();
 }
 
+template<class Traits>
+inline void Twang<Traits>::tick()
+{
+    mLfo.tick();
+    mEnvelope.tick();
+}
+
 // -----------------------------------------------------------------------------
 
 template<class Traits>
@@ -92,9 +99,9 @@ inline void Twang<Traits>::setWaveform(byte inWaveform)
 // -----------------------------------------------------------------------------
 
 template<class Traits>
-inline void Twang<Traits>::setDecay(DecayEnvelope::Decay inDecay)
+inline void Twang<Traits>::setDuration(DecayEnvelope::TimeFactor inDuration)
 {
-    mEnvelope.setDecay(inDecay);
+    mEnvelope.setDuration(inDuration);
 }
 
 template<class Traits>

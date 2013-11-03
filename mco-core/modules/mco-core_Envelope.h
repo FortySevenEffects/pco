@@ -27,67 +27,12 @@
 #include "engine/mco-core_Tables.h"
 
 BEGIN_MCO_CORE_NAMESPACE
-/*
-class AdsrEnvelope : public TickCounter
-{
-public:
-    typedef UModSample  Sample;
-    typedef uint14      TimeFactor;
-    typedef TimeFactor  Attack;
-    typedef TimeFactor  Decay;
-    typedef TimeFactor  Release;
-    typedef Sample      Sustain;
-
-    enum // States
-    {
-          idle = 0
-        , attack
-        , decay
-        , sustain
-        , release
-    };
-
-public:
-    inline  AdsrEnvelope();
-    inline ~AdsrEnvelope();
-
-public:
-    inline void init();
-    inline void process(Sample& outSample);
-    inline void gateOn();
-    inline void gateOff();
-
-public:
-    inline void setAttack(Attack inAttack);
-    inline void setDecay(Decay inDecay);
-    inline void setSustain(Sustain inLevel);
-    inline void setRelease(Release inRelease);
-
-private:
-    inline bool updatePhase();
-    inline void processAttack(Sample& outSample);
-    inline void processDecay(Sample& outSample);
-    inline void processSustain(Sample& outSample);
-    inline void processRelease(Sample& outSample);
-
-private:
-    Sustain mSustainLevel;
-
-    byte mState;
-    Sample mCurrentValue;
-
-    Phase mPhase;
-    Phase mCurrentPhaseIncrement;
-};
-*/
-// -----------------------------------------------------------------------------
 
 class DecayEnvelope : public TickCounter
 {
 public:
     typedef UModSample  Sample;
     typedef uint14      TimeFactor;
-    typedef TimeFactor  Decay;
     typedef byte        LinearityAmount;
 
 public:
@@ -98,7 +43,7 @@ public:
     inline void init();
     inline void process(Sample& outSample);
     inline void trigger();
-    inline void setDecay(Decay inDecay);
+    inline void setDuration(TimeFactor inDuration);
     inline void setLinearity(LinearityAmount inAmount);
 
 public:
@@ -114,6 +59,59 @@ private:
     Phase mPhase;
     Phase mPhaseIncrement;
     LinearityAmount mLinearity;
+};
+
+// -----------------------------------------------------------------------------
+
+class AdsrEnvelope
+{
+public:
+    typedef DecayEnvelope::TimeFactor   TimeFactor;
+    typedef DecayEnvelope::Sample       Sample;
+
+    enum State
+    {
+          idle = 0
+        , attack
+        , decay
+        , sustain
+        , release
+    };
+
+public:
+    inline  AdsrEnvelope();
+    inline ~AdsrEnvelope();
+
+public:
+    inline void init();
+    inline void process(Sample& outSample);
+    inline void tick();
+
+public:
+    inline void gateOn();
+    inline void gateOff();
+
+public:
+    inline void setAttack(TimeFactor inAttack);
+    inline void setDecay(TimeFactor inDecay);
+    inline void setSustain(Sample inLevel);
+    inline void setRelease(TimeFactor inRelease);
+
+private:
+    inline void changeState();
+    inline void processAttack(Sample& outSample);
+    inline void processDecay(Sample& outSample);
+    inline void processSustain(Sample& outSample);
+    inline void processRelease(Sample& outSample);
+
+private:
+    TimeFactor mAttackTime;
+    TimeFactor mDecayTime;
+    Sample mSustainLevel;
+    TimeFactor mReleaseTime;
+
+    State mState;
+    DecayEnvelope mCore;
 };
 
 END_MCO_CORE_NAMESPACE

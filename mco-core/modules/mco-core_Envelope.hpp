@@ -21,134 +21,6 @@
 #pragma once
 
 BEGIN_MCO_CORE_NAMESPACE
-/*
-inline AdsrEnvelope::AdsrEnvelope()
-{
-}
-
-inline AdsrEnvelope::~AdsrEnvelope()
-{
-}
-
-// -----------------------------------------------------------------------------
-
-inline void AdsrEnvelope::init()
-{
-    setAttack(0);
-    setDecay(0);
-    setSustain(sUModSampleMax);
-    setRelease(0);
-}
-
-inline void AdsrEnvelope::process(Sample& outSample)
-{
-    const bool overflow = updatePhase();
-    if (overflow)
-    {
-        // go to next state
-    }
-
-    switch (mState)
-    {
-        default:
-        case idle:
-            break;
-
-        case attack:    processAttack(outSample);   break;
-        case decay:     processDecay(outSample);    break;
-        case sustain:   processSustain(outSample);  break;
-        case release:   processRelease(outSample);  break;
-    }
-}
-
-// -----------------------------------------------------------------------------
-
-inline void AdsrEnvelope::gateOn()
-{
-    mState = attack;
-}
-
-inline void AdsrEnvelope::gateOff()
-{
-    mState = release;
-}
-
-// -----------------------------------------------------------------------------
-
-inline void AdsrEnvelope::setAttack(Attack inAttack)
-{
-    // \todo Compute time constant and phase incr here.
-}
-
-inline void AdsrEnvelope::setDecay(Decay inDecay)
-{
-    // \todo Compute time constant and phase incr here.
-}
-
-inline void AdsrEnvelope::setSustain(Sustain inLevel)
-{
-    mSustainLevel = inSustain;
-}
-
-inline void AdsrEnvelope::setRelease(Release inRelease)
-{
-    // \todo Compute time constant and phase incr here.
-}
-
-// -----------------------------------------------------------------------------
-
-inline bool AdsrEnvelope::updatePhase()
-{
-    TickCount ticks = 0;
-    fetchTickCounter(ticks);
-    const Phase increment = ticks * mPhaseIncrement;
-    if (increment > (0xffff - mPhase))
-    {
-        // Increment will overflow
-        mPhase = 0;
-        return true;
-    }
-
-    mPhase += increment;
-    return false;
-}
-
-inline void AdsrEnvelope::processAttack(Sample& outSample)
-{
-    if (mCurrentValue == sUModSampleMax)
-    {
-        mState = decay;
-        processDecay(outSample);
-        return;
-    }
-
-    return mPhase; // Linear output
-}
-
-inline void AdsrEnvelope::processDecay(Sample& outSample)
-{
-
-}
-
-inline void AdsrEnvelope::processSustain(Sample& outSample)
-{
-    mCurrentValue = mSustainLevel;
-    outSample = mCurrentValue;
-}
-
-inline void AdsrEnvelope::processRelease(Sample& outSample)
-{
-    if (mCurrentValue == 0)
-    {
-        mState = idle;
-        return;
-    }
-
-    // \todo Implement me.
-}
-*/
-
-// ########################################################################## //
 
 inline DecayEnvelope::DecayEnvelope()
 {
@@ -190,9 +62,9 @@ inline void DecayEnvelope::trigger()
     resetTickCounter();
 }
 
-inline void DecayEnvelope::setDecay(Decay inDecay)
+inline void DecayEnvelope::setDuration(TimeFactor inDuration)
 {
-    mPhaseIncrement = 0xffff - inDecay;
+    mPhaseIncrement = 0xffff - inDuration;
 }
 
 inline void DecayEnvelope::setLinearity(LinearityAmount inAmount)
@@ -237,6 +109,216 @@ inline DecayEnvelope::Sample DecayEnvelope::processExponential() const
     const uint16 expA = LookupTables::getExpDischarge(index + 1);
     const uint16 expB = LookupTables::getExpDischarge(index);
     return interpol_u(expA, expB, alpha);
+}
+
+// ########################################################################## //
+
+inline AdsrEnvelope::AdsrEnvelope()
+{
+}
+
+inline AdsrEnvelope::~AdsrEnvelope()
+{
+}
+
+// -----------------------------------------------------------------------------
+
+inline void AdsrEnvelope::init()
+{
+    mCore.init();
+    setAttack(0);
+    setDecay(0);
+    setSustain(sUModSampleMax);
+    setRelease(0);
+}
+
+inline void AdsrEnvelope::process(Sample& outSample)
+{
+    switch (mState)
+    {
+        case attack:
+        case decay:
+        case release:
+            if (!mCore.isActive())
+                changeState();
+            break;
+    }
+
+    switch (mState)
+    {
+        default:
+        case idle:
+            break;
+
+        case attack:    processAttack(outSample);   break;
+        case decay:     processDecay(outSample);    break;
+        case sustain:   processSustain(outSample);  break;
+        case release:   processRelease(outSample);  break;
+    }
+}
+
+inline void AdsrEnvelope::tick()
+{
+    mCore.tick();
+}
+
+// -----------------------------------------------------------------------------
+
+inline void AdsrEnvelope::gateOn()
+{
+    mState = idle;
+    changeState();
+}
+
+inline void AdsrEnvelope::gateOff()
+{
+    mState = sustain;
+    changeState();
+}
+
+// -----------------------------------------------------------------------------
+
+inline void AdsrEnvelope::setAttack(TimeFactor inAttack)
+{
+    mAttackTime = inAttack;
+    if (mState == attack)
+    {
+        mCore.setDuration(mAttackTime);
+    }
+}
+
+inline void AdsrEnvelope::setDecay(TimeFactor inDecay)
+{
+    mDecayTime = inDecay;
+    if (mState == decay)
+    {
+        mCore.setDuration(mDecayTime);
+    }
+}
+
+inline void AdsrEnvelope::setSustain(Sample inLevel)
+{
+    mSustainLevel = inLevel;
+}
+
+inline void AdsrEnvelope::setRelease(TimeFactor inRelease)
+{
+    mReleaseTime = inRelease;
+    if (mState == release)
+    {
+        mCore.setDuration(mReleaseTime);
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+inline void AdsrEnvelope::changeState()
+{
+    switch (mState)
+    {
+        case idle:
+        {
+            mState = attack;
+            if (mAttackTime == 0)
+            {
+                // go directly to decay
+                changeState();
+            }
+            else
+            {
+                mCore.setDuration(mAttackTime);
+                mCore.trigger();
+            }
+            break;
+        }
+
+        case attack:
+        {
+            mState = decay;
+            if (mDecayTime == 0)
+            {
+                // go directly to sustain
+                changeState();
+            }
+            else
+            {
+                mCore.setDuration(mDecayTime);
+                mCore.trigger();
+            }
+            break;
+        }
+
+        case decay:
+        {
+            if (mSustainLevel == 0)
+            {
+                mState = idle;
+            }
+            else
+            {
+                mState = sustain;
+            }
+            break;
+        }
+
+        case sustain:
+        {
+            mState = release;
+            if (mReleaseTime == 0)
+            {
+                // go directly to idle
+                changeState();
+            }
+            else
+            {
+                mCore.setDuration(mReleaseTime);
+                mCore.trigger();
+            }
+            break;
+        }
+
+        case release: // go to idle
+        {
+            mState = idle;
+            break;
+        }
+
+        default:
+            mState = idle;
+            break;
+    }
+}
+
+inline void AdsrEnvelope::processAttack(Sample& outSample)
+{
+    Sample sample = 0;
+    mCore.process(sample);
+    outSample = sUModSampleMax - sample;
+}
+
+inline void AdsrEnvelope::processDecay(Sample& outSample)
+{
+    Sample sample = 0;
+    mCore.process(sample);
+
+    const uint32 scale = sUModSampleMax - mSustainLevel;
+    const Sample scaledSample = scale * uint32(sample) >> 16;
+    outSample = mSustainLevel + scaledSample;
+}
+
+inline void AdsrEnvelope::processSustain(Sample& outSample)
+{
+    outSample = mSustainLevel;
+}
+
+inline void AdsrEnvelope::processRelease(Sample& outSample)
+{
+    Sample sample = 0;
+    mCore.process(sample);
+
+    const uint32 scale = sUModSampleMax - mSustainLevel;
+    const Sample scaledSample = scale * uint32(sample) >> 16;
+    outSample = mSustainLevel + scaledSample;
 }
 
 END_MCO_CORE_NAMESPACE

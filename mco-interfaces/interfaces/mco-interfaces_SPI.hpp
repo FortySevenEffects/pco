@@ -143,17 +143,11 @@ void SpiInterface<Traits>::dispatch()
 
         // ---------------------------------------------------------------------
 
-        case MessageStatus::PortamentoAmount:
-            mEngine.mPortamento.setAmount(mco_core::decode_u14(mMessage[1], mMessage[2]));
+        case MessageStatus::PortamentoTime:
+            mEngine.mPortamento.setDuration(mco_core::decode_u14(mMessage[1], mMessage[2]));
             break;
-        case MessageStatus::PortamentoMode:
-            mEngine.mPortamento.setMode(mMessage[1]);
-            break;
-        case MessageStatus::EnablePortamento:
-            mEngine.mPortamento.setEnabled(true);
-            break;
-        case MessageStatus::DisablePortamento:
-            mEngine.mPortamento.setEnabled(false);
+        case MessageStatus::PortamentoLinearity:
+            mEngine.mPortamento.setLinearity(mMessage[1]);
             break;
 
         // ---------------------------------------------------------------------
