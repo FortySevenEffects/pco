@@ -40,18 +40,17 @@ inline void DecayEnvelope::process(Sample& outSample)
 {
     if (mProcessing)
     {
-        if (updatePhase())
-        {
-            // Phase overflow: reached the end of decay time.
-            mProcessing = false;
-            return;
-        }
-
         const Sample sampleLin = processLinear();
         const Sample sampleExp = processExponential();
 
         // Blend
         outSample = interpol_s(sampleExp, sampleLin, mLinearity);
+
+        if (updatePhase())
+        {
+            // Phase overflow: reached the end of decay time.
+            mProcessing = false;
+        }
     }
 }
 
