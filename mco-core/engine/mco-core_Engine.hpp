@@ -53,12 +53,17 @@ inline void Engine<Traits>::init()
     mPortamento.init();
     mVibrato.init();
     mPWM.init();
-    
+    mTwang.init();
+
     // Activate tick for modules - Match defs in mco-core_Defs.h
     TickTimer::enableInterruptOverflow();
     TickTimer::start(TickTimer::prescale1);
 
     sei(); // Activate global interrupts
+
+    mTwang.setDecay(1000);      // 1 second
+    mTwang.setFrequency(1000);  // 1 Hz
+    mTwang.setLinearity(0xff);  // Full linear
 }
 
 template<class Traits>
@@ -70,6 +75,7 @@ inline void Engine<Traits>::process()
 
     Pitch modulation = mModulation;
     mVibrato.process(modulation);
+    mSlowRandom.process(modulation);
     
     mPitch += modulation;
     mPitch += mDetune;
@@ -80,6 +86,7 @@ template<class Traits>
 inline void Engine<Traits>::setPitch(const Pitch& inPitch)
 {
     mPortamento.trigger(inPitch);
+    mTwang.trigger();
     unmute();
 }
 

@@ -28,6 +28,8 @@
 #include "modules/mco-core_Portamento.h"
 #include "modules/mco-core_Vibrato.h"
 #include "modules/mco-core_PWM.h"
+#include "modules/mco-core_SlowRandom.h"
+#include "modules/mco-core_Twang.h"
 #include <avr/interrupt.h>
 
 BEGIN_MCO_CORE_NAMESPACE
@@ -76,6 +78,13 @@ public: // For convenience access
     Portamento      mPortamento;
     Vibrato         mVibrato;
     PwmClass        mPWM;
+    SlowRandom      mSlowRandom;
+
+    struct TwangTraits
+    {
+        typedef LinearMapper<FixedPointFreq, 100, 10000> LfoMapper;
+    };
+    Twang<TwangTraits> mTwang;
 
 private:    
     Pitch           mPitch;
