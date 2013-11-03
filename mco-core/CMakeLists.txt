@@ -45,6 +45,12 @@ append(mco-core_SOURCES
     modules/mco-core_PWM.cpp
     modules/mco-core_PWM.hpp
     modules/mco-core_PWM.h
+    modules/mco-core_SlowRandom.cpp
+    modules/mco-core_SlowRandom.hpp
+    modules/mco-core_SlowRandom.h
+    modules/mco-core_Twang.cpp
+    modules/mco-core_Twang.hpp
+    modules/mco-core_Twang.h
 )
 
 append(mco-core_PUBLIC_DEPS
