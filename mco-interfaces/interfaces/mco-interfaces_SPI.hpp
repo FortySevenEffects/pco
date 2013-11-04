@@ -146,8 +146,8 @@ void SpiInterface<Traits>::dispatch()
         case MessageStatus::PortamentoTime:
             mEngine.mPortamento.setDuration(mco_core::decode_u14(mMessage[1], mMessage[2]));
             break;
-        case MessageStatus::PortamentoLinearity:
-            mEngine.mPortamento.setLinearity(mMessage[1] << 1);
+        case MessageStatus::PortamentoBend:
+            mEngine.mPortamento.setBend(mMessage[1]);
             break;
 
         // ---------------------------------------------------------------------

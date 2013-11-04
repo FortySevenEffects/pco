@@ -99,15 +99,15 @@ inline void Twang<Traits>::setWaveform(byte inWaveform)
 // -----------------------------------------------------------------------------
 
 template<class Traits>
-inline void Twang<Traits>::setDuration(DecayEnvelope::TimeFactor inDuration)
+inline void Twang<Traits>::setDuration(TimeFactor inDuration)
 {
     mEnvelope.setDuration(inDuration);
 }
 
 template<class Traits>
-inline void Twang<Traits>::setLinearity(DecayEnvelope::LinearityAmount inAmount)
+inline void Twang<Traits>::setBend(BendAmount inAmount)
 {
-    mEnvelope.setLinearity(inAmount);
+    mEnvelope.setBend(inAmount);
 }
 
 END_MCO_CORE_NAMESPACE

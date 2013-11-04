@@ -46,7 +46,7 @@ public:
     inline void setWaveform(byte inWaveform);
     
 private:
-    typedef LinearMapper<FixedPointFreq, 1000, 8000> SpeedMapper;
+    typedef ExpMapper<FixedPointFreq, 1000, 8000> SpeedMapper;
     typedef LFO<SpeedMapper> VibratoLfo;
 
     Amount      mAmount;

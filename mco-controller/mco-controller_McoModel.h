@@ -48,7 +48,7 @@ public:
     inline void setDetune(const mco_core::Pitch& inPitch);
 
     inline void setPortamentoTime(unsigned inTime);
-    inline void setPortamentoLinearity(byte inLinearity);
+    inline void setPortamentoBend(byte inBend);
 
     inline void setVibratoSpeed(unsigned inSpeed);
     inline void setVibratoAmount(unsigned inAmount);

@@ -22,6 +22,7 @@
 
 #include "mco-core.h"
 #include "engine/mco-core_Pitch.h"
+#include "engine/mco-core_Mappers.h"
 #include "modules/mco-core_Envelope.h"
 
 BEGIN_MCO_CORE_NAMESPACE
@@ -29,9 +30,12 @@ BEGIN_MCO_CORE_NAMESPACE
 class Portamento
 {
 public:
-    typedef DecayEnvelope               Envelope;
-    typedef Envelope::LinearityAmount   LinearityAmount;
-    typedef Envelope::TimeFactor        TimeFactor;
+    static const FixedPointTime sMinTime = 1000;    // 1 ms
+    static const FixedPointTime sMaxTime = 4000000; // 4 s
+    
+    typedef ExpMapper<FixedPointTime, sMinTime, sMaxTime, 0x7f> EnvelopeMapper;
+    typedef DecayEnvelope<EnvelopeMapper>                       Envelope;
+    typedef typename Envelope::BendAmount                       BendAmount;
 
 public:
     inline Portamento();
@@ -47,14 +51,12 @@ public:
     
 public:
     inline void setDuration(TimeFactor inDuration);
-    inline void setLinearity(LinearityAmount inAmount);
+    inline void setBend(BendAmount inAmount);
 
 private:
     Envelope mEnvelope;
-
     Pitch mTargetPitch;
     Pitch mOriginPitch;
-    uint8 mMode;
 };
 
 END_MCO_CORE_NAMESPACE

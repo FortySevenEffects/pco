@@ -22,29 +22,35 @@
 
 BEGIN_MCO_CORE_NAMESPACE
 
-inline DecayEnvelope::DecayEnvelope()
+template<class Mapper>
+inline DecayEnvelope<Mapper>::DecayEnvelope()
 {
 }
 
-inline DecayEnvelope::~DecayEnvelope()
+template<class Mapper>
+inline DecayEnvelope<Mapper>::~DecayEnvelope()
 {
 }
 
 // -----------------------------------------------------------------------------
 
-inline void DecayEnvelope::init()
+template<class Mapper>
+inline void DecayEnvelope<Mapper>::init()
 {
 }
 
-inline void DecayEnvelope::process(Sample& outSample)
+template<class Mapper>
+inline void DecayEnvelope<Mapper>::process(Sample& outSample)
 {
     if (mProcessing)
     {
-        const Sample sampleLin = processLinear();
-        const Sample sampleExp = processExponential();
+        Sample sampleLin = 0;
+        Sample sampleExp = 0;
+        processLinear(sampleLin);
+        processExponential(sampleExp);
 
         // Blend
-        outSample = interpol_s(sampleExp, sampleLin, mLinearity);
+        outSample = interpol_u(sampleLin, sampleExp, mBendAmount);
 
         if (updatePhase())
         {
@@ -54,33 +60,54 @@ inline void DecayEnvelope::process(Sample& outSample)
     }
 }
 
-inline void DecayEnvelope::trigger()
+template<class Mapper>
+inline void DecayEnvelope<Mapper>::trigger()
 {
     mProcessing = true;
     mPhase = 0;
     resetTickCounter();
 }
 
-inline void DecayEnvelope::setDuration(TimeFactor inDuration)
+template<class Mapper>
+inline void DecayEnvelope<Mapper>::setDuration(TimeFactor inDuration)
 {
-    mPhaseIncrement = 0xffff - inDuration;
+    setPhaseIncrement(computePhaseIncrement(inDuration));
 }
 
-inline void DecayEnvelope::setLinearity(LinearityAmount inAmount)
+template<class Mapper>
+inline void DecayEnvelope<Mapper>::setBend(BendAmount inAmount)
 {
-    mLinearity = inAmount;
+    mBendAmount = inAmount;
 }
 
 // -----------------------------------------------------------------------------
 
-inline bool DecayEnvelope::isActive() const
+template<class Mapper>
+inline bool DecayEnvelope<Mapper>::isActive() const
 {
     return mProcessing;
 }
 
 // -----------------------------------------------------------------------------
 
-inline bool DecayEnvelope::updatePhase()
+template<class Mapper>
+inline Phase DecayEnvelope<Mapper>::computePhaseIncrement(TimeFactor inTime)
+{
+    static const Phase phaseMax = 0xffff;
+    static const FixedPointTime tickTime = 1000000 / sTickFrequency;
+    const FixedPointTime time = Mapper::map(inTime);
+    const uint16 numTicksPerPeriod = time / tickTime;
+    return phaseMax / numTicksPerPeriod;
+}
+
+template<class Mapper>
+inline void DecayEnvelope<Mapper>::setPhaseIncrement(Phase inIncrement)
+{
+    mPhaseIncrement = inIncrement;
+}
+
+template<class Mapper>
+inline bool DecayEnvelope<Mapper>::updatePhase()
 {
     TickCount ticks = 0;
     fetchTickCounter(ticks);
@@ -96,33 +123,38 @@ inline bool DecayEnvelope::updatePhase()
     return false;
 }
 
-inline DecayEnvelope::Sample DecayEnvelope::processLinear() const
+template<class Mapper>
+inline void DecayEnvelope<Mapper>::processLinear(Sample& outSample)
 {
-    return sUModSampleMax - mPhase;
+    outSample = sUModSampleMax - mPhase;
 }
 
-inline DecayEnvelope::Sample DecayEnvelope::processExponential() const
+template<class Mapper>
+inline void DecayEnvelope<Mapper>::processExponential(Sample& outSample)
 {
     const uint7 index = (mPhase >> 9);          // index range: [0 ; 127]
     const uint7 alpha = (mPhase >> 2) & 0x7f;   // alpha range: [0 ; 127]
     const uint16 expA = LookupTables::getExpDischarge(index + 1);
     const uint16 expB = LookupTables::getExpDischarge(index);
-    return interpol_u(expA, expB, alpha);
+    outSample = interpol_u(expA, expB, alpha);
 }
 
 // ########################################################################## //
 
-inline AdsrEnvelope::AdsrEnvelope()
+template<class Mapper>
+inline AdsrEnvelope<Mapper>::AdsrEnvelope()
 {
 }
 
-inline AdsrEnvelope::~AdsrEnvelope()
+template<class Mapper>
+inline AdsrEnvelope<Mapper>::~AdsrEnvelope()
 {
 }
 
 // -----------------------------------------------------------------------------
 
-inline void AdsrEnvelope::init()
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::init()
 {
     mCore.init();
     setAttack(0);
@@ -131,7 +163,8 @@ inline void AdsrEnvelope::init()
     setRelease(0);
 }
 
-inline void AdsrEnvelope::process(Sample& outSample)
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::process(Sample& outSample)
 {
     switch (mState)
     {
@@ -156,20 +189,23 @@ inline void AdsrEnvelope::process(Sample& outSample)
     }
 }
 
-inline void AdsrEnvelope::tick()
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::tick()
 {
     mCore.tick();
 }
 
 // -----------------------------------------------------------------------------
 
-inline void AdsrEnvelope::gateOn()
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::gateOn()
 {
     mState = idle;
     changeState();
 }
 
-inline void AdsrEnvelope::gateOff()
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::gateOff()
 {
     mState = sustain;
     changeState();
@@ -177,73 +213,68 @@ inline void AdsrEnvelope::gateOff()
 
 // -----------------------------------------------------------------------------
 
-inline void AdsrEnvelope::setAttack(TimeFactor inAttack)
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::setAttack(TimeFactor inAttack)
 {
-    mAttackTime = inAttack;
+    mAttackPhaseIncr = CoreEnvelope::computePhaseIncrement(inAttack);
     if (mState == attack)
     {
-        mCore.setDuration(mAttackTime);
+        mCore.setPhaseIncrement(mAttackPhaseIncr);
     }
 }
 
-inline void AdsrEnvelope::setDecay(TimeFactor inDecay)
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::setDecay(TimeFactor inDecay)
 {
-    mDecayTime = inDecay;
+    mDecayPhaseIncr = CoreEnvelope::computePhaseIncrement(inDecay);
     if (mState == decay)
     {
-        mCore.setDuration(mDecayTime);
+        mCore.setPhaseIncrement(mDecayPhaseIncr);
     }
 }
 
-inline void AdsrEnvelope::setSustain(Sample inLevel)
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::setSustain(Sample inLevel)
 {
     mSustainLevel = inLevel;
 }
 
-inline void AdsrEnvelope::setRelease(TimeFactor inRelease)
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::setRelease(TimeFactor inRelease)
 {
-    mReleaseTime = inRelease;
+    mReleasePhaseIncr = CoreEnvelope::computePhaseIncrement(inRelease);
     if (mState == release)
     {
-        mCore.setDuration(mReleaseTime);
+        mCore.setPhaseIncrement(mReleasePhaseIncr);
     }
+}
+
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::setBend(BendAmount inAmount)
+{
+    mCore.setBend(inAmount);
 }
 
 // -----------------------------------------------------------------------------
 
-inline void AdsrEnvelope::changeState()
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::changeState()
 {
     switch (mState)
     {
         case idle:
         {
             mState = attack;
-            if (mAttackTime == 0)
-            {
-                // go directly to decay
-                changeState();
-            }
-            else
-            {
-                mCore.setDuration(mAttackTime);
-                mCore.trigger();
-            }
+            mCore.setPhaseIncrement(mAttackPhaseIncr);
+            mCore.trigger();
             break;
         }
 
         case attack:
         {
             mState = decay;
-            if (mDecayTime == 0)
-            {
-                // go directly to sustain
-                changeState();
-            }
-            else
-            {
-                mCore.setDuration(mDecayTime);
-                mCore.trigger();
-            }
+            mCore.setPhaseIncrement(mDecayPhaseIncr);
+            mCore.trigger();
             break;
         }
 
@@ -263,16 +294,8 @@ inline void AdsrEnvelope::changeState()
         case sustain:
         {
             mState = release;
-            if (mReleaseTime == 0)
-            {
-                // go directly to idle
-                changeState();
-            }
-            else
-            {
-                mCore.setDuration(mReleaseTime);
-                mCore.trigger();
-            }
+            mCore.setPhaseIncrement(mReleasePhaseIncr);
+            mCore.trigger();
             break;
         }
 
@@ -288,14 +311,16 @@ inline void AdsrEnvelope::changeState()
     }
 }
 
-inline void AdsrEnvelope::processAttack(Sample& outSample)
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::processAttack(Sample& outSample)
 {
     Sample sample = 0;
     mCore.process(sample);
     outSample = sUModSampleMax - sample;
 }
 
-inline void AdsrEnvelope::processDecay(Sample& outSample)
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::processDecay(Sample& outSample)
 {
     Sample sample = 0;
     mCore.process(sample);
@@ -305,12 +330,14 @@ inline void AdsrEnvelope::processDecay(Sample& outSample)
     outSample = mSustainLevel + scaledSample;
 }
 
-inline void AdsrEnvelope::processSustain(Sample& outSample)
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::processSustain(Sample& outSample)
 {
     outSample = mSustainLevel;
 }
 
-inline void AdsrEnvelope::processRelease(Sample& outSample)
+template<class Mapper>
+inline void AdsrEnvelope<Mapper>::processRelease(Sample& outSample)
 {
     Sample sample = 0;
     mCore.process(sample);

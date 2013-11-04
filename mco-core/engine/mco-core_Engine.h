@@ -81,7 +81,8 @@ public: // For convenience access
 
     struct TwangTraits
     {
-        typedef LinearMapper<FixedPointFreq, 100, 10000> LfoMapper;
+        typedef ExpMapper<FixedPointTime, 1000, 4000000>    EnvelopeMapper;
+        typedef ExpMapper<FixedPointFreq, 100, 10000>       LfoMapper;
     };
     Twang<TwangTraits> mTwang;
 

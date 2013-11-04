@@ -28,12 +28,15 @@
 
 BEGIN_MCO_CORE_NAMESPACE
 
-class DecayEnvelope : public TickCounter
+template<class Mapper> class AdsrEnvelope;
+
+template<class Mapper>
+class DecayEnvelope
+    : public TickCounter
 {
 public:
     typedef UModSample  Sample;
-    typedef uint14      TimeFactor;
-    typedef byte        LinearityAmount;
+    typedef uint7       BendAmount; // 0: linear ; 0x7f: exponential
 
 public:
     inline  DecayEnvelope();
@@ -44,30 +47,39 @@ public:
     inline void process(Sample& outSample);
     inline void trigger();
     inline void setDuration(TimeFactor inDuration);
-    inline void setLinearity(LinearityAmount inAmount);
+    inline void setBend(BendAmount inAmount);
 
 public:
     inline bool isActive() const;
 
 private:
+    static inline Phase computePhaseIncrement(TimeFactor inTime);
+    inline void setPhaseIncrement(Phase inIncrement);
+
+private:
     inline bool updatePhase();
-    inline Sample processLinear() const;
-    inline Sample processExponential() const;
+    inline void processLinear(Sample& outSample);
+    inline void processExponential(Sample& outSample);
 
 private:
     bool mProcessing;
     Phase mPhase;
     Phase mPhaseIncrement;
-    LinearityAmount mLinearity;
+    BendAmount mBendAmount;
+
+private:
+    friend class AdsrEnvelope<Mapper>;
 };
 
 // -----------------------------------------------------------------------------
 
+template<class Mapper>
 class AdsrEnvelope
 {
 public:
-    typedef DecayEnvelope::TimeFactor   TimeFactor;
-    typedef DecayEnvelope::Sample       Sample;
+    typedef DecayEnvelope<Mapper>               CoreEnvelope;
+    typedef typename CoreEnvelope::Sample       Sample;
+    typedef typename CoreEnvelope::BendAmount   BendAmount;
 
     enum State
     {
@@ -96,6 +108,7 @@ public:
     inline void setDecay(TimeFactor inDecay);
     inline void setSustain(Sample inLevel);
     inline void setRelease(TimeFactor inRelease);
+    inline void setBend(BendAmount inAmount);
 
 private:
     inline void changeState();
@@ -105,13 +118,13 @@ private:
     inline void processRelease(Sample& outSample);
 
 private:
-    TimeFactor mAttackTime;
-    TimeFactor mDecayTime;
+    Phase mAttackPhaseIncr;
+    Phase mDecayPhaseIncr;
     Sample mSustainLevel;
-    TimeFactor mReleaseTime;
+    Phase mReleasePhaseIncr;
 
     State mState;
-    DecayEnvelope mCore;
+    CoreEnvelope mCore;
 };
 
 END_MCO_CORE_NAMESPACE

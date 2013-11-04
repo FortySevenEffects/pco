@@ -36,7 +36,6 @@ inline void Portamento::init()
 {
     mTargetPitch = Pitch(64, 0);
     mEnvelope.init();
-    setLinearity(0xff);
 }
 
 inline void Portamento::trigger(const Pitch& inTarget)
@@ -84,9 +83,9 @@ inline void Portamento::setDuration(TimeFactor inDuration)
     mEnvelope.setDuration(inDuration);
 }
 
-inline void Portamento::setLinearity(LinearityAmount inAmount)
+inline void Portamento::setBend(BendAmount inAmount)
 {
-    mEnvelope.setLinearity(inAmount);
+    mEnvelope.setBend(inAmount);
 }
 
 END_MCO_CORE_NAMESPACE

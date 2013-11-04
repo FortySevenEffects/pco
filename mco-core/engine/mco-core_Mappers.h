@@ -22,11 +22,25 @@
 
 #include "mco-core.h"
 #include "mco-core_Defs.h"
+#include "engine/mco-core_Math.h"
+#include "engine/mco-core_Tables.h"
 
 BEGIN_MCO_CORE_NAMESPACE
 
 template<typename Type, Type Min, Type Max>
-struct LinearMapper
+struct LinMapper
+{
+    static inline Type map(Amount inAmount);
+};
+
+template<typename Type, Type Min, Type Max, uint7 BendAmount = 0x7f>
+struct ExpMapper
+{
+    static inline Type map(Amount inAmount);
+};
+
+template<typename Type, Type Min, Type Max, uint7 BendAmount = 0x7f>
+struct LogMapper
 {
     static inline Type map(Amount inAmount);
 };

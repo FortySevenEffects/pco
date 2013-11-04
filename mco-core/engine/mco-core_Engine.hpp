@@ -61,9 +61,8 @@ inline void Engine<Traits>::init()
 
     sei(); // Activate global interrupts
 
-    mTwang.setDuration(1000);   // 1 second
-    mTwang.setFrequency(1000);  // 1 Hz
-    mTwang.setLinearity(0xff);  // Full linear
+    mTwang.setDuration(1000);
+    mTwang.setFrequency(1000);
 }
 
 template<class Traits>

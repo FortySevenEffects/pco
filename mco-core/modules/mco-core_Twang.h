@@ -30,6 +30,16 @@ BEGIN_MCO_CORE_NAMESPACE
 template<class Traits>
 class Twang
 {
+private:
+    typedef typename Traits::EnvelopeMapper     EnvelopeMapper;
+    typedef typename Traits::LfoMapper          LfoMapper;
+
+    typedef DecayEnvelope<EnvelopeMapper>       Envelope;
+    typedef LFO<LfoMapper>                      Lfo;
+
+public:
+    typedef typename Envelope::BendAmount       BendAmount;
+
 public:
     inline  Twang();
     inline ~Twang();
@@ -48,14 +58,12 @@ public: // Oscillation parameters
     inline void setWaveform(byte inWaveform);
 
 public: // Envelope parameters
-    inline void setDuration(DecayEnvelope::TimeFactor inDecay);
-    inline void setLinearity(DecayEnvelope::LinearityAmount inAmount);
+    inline void setDuration(TimeFactor inDecay);
+    inline void setBend(BendAmount inAmount);
 
 private:
-    typedef typename Traits::LfoMapper LfoFreqMapper;
-    typedef LFO<LfoFreqMapper> Lfo;
     Lfo mLfo;
-    DecayEnvelope mEnvelope;
+    Envelope mEnvelope;
 };
 
 END_MCO_CORE_NAMESPACE

@@ -34,7 +34,7 @@ struct MessageStatus
         , GlobalDetune          = 0x82  // [MSB]        [LSB]   (14 bits signed)
         , ModulationRange       = 0x83  // [MSB]        [LSB]   (14 bits unsigned)
         , PortamentoTime        = 0x84  // [MSB]        [LSB]   (14 bits unsigned)
-        , PortamentoLinearity   = 0x85  // [Linearity]
+        , PortamentoBend        = 0x85  // [Bend]
         , VibratoSpeed          = 0x86  // [MSB]        [LSB]   (14 bits unsigned)
         , VibratoAmount         = 0x87  // [MSB]        [LSB]   (14 bits unsigned)
         , VibratoWaveform       = 0x88  // [Waveform]
@@ -68,9 +68,9 @@ struct MessageStatus
         {
             return 1;
         }
-        else if (inStatus == CoarseNote          ||
-                 inStatus == PortamentoLinearity ||
-                 inStatus == VibratoWaveform     ||
+        else if (inStatus == CoarseNote         ||
+                 inStatus == PortamentoBend     ||
+                 inStatus == VibratoWaveform    ||
                  inStatus == PwmWaveform)
         {
             return 2;

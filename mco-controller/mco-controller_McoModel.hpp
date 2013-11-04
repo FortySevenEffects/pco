@@ -90,11 +90,11 @@ inline void McoModel<Traits>::setPortamentoTime(unsigned inDuration)
 }
 
 template<class Traits>
-inline void McoModel<Traits>::setPortamentoLinearity(byte inLinearity)
+inline void McoModel<Traits>::setPortamentoBend(byte inBend)
 {
     ScopedSlaveSelector selector;
-    mInterface.send(mco_common::MessageStatus::PortamentoLinearity);
-    mInterface.send(inLinearity);
+    mInterface.send(mco_common::MessageStatus::PortamentoBend);
+    mInterface.send(inBend);
 }
 
 // -----------------------------------------------------------------------------
