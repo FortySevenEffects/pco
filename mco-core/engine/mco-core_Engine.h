@@ -28,6 +28,7 @@
 #include "modules/mco-core_Vibrato.h"
 #include "modules/mco-core_PWM.h"
 #include "modules/mco-core_SlowRandom.h"
+#include "modules/mco-core_Tuning.h"
 #include "modules/mco-core_Twang.h"
 #include <avr/interrupt.h>
 
@@ -62,6 +63,9 @@ public:
     inline void unmute();
 
 public:
+    inline void setTuning(bool inTuning);
+
+public:
     inline byte getCurrentOctave() const;
     inline byte getCurrentSemiIndex() const;
     inline byte getCurrentCentsOffset() const;
@@ -74,6 +78,8 @@ public:
 
 public: // For convenience access
     TimerClass      mTimer;
+    Tuning          mTuningModule;
+
     Portamento      mPortamento;
     Vibrato         mVibrato;
     PwmClass        mPWM;
@@ -95,6 +101,8 @@ private:
     uint8           mPrescaleIndex;
     uint32          mPrescaledClock;
     uint64          mClockDivision;
+
+    bool            mTuning;
 };
 
 END_MCO_CORE_NAMESPACE

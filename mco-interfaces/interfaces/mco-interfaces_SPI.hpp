@@ -191,6 +191,21 @@ void SpiInterface<Traits>::dispatch()
             mEngine.handleSyncPulse();
             break;
 
+        // ---------------------------------------------------------------------
+
+        case MessageStatus::EnterTuning:
+            mEngine.unmute();
+            mEngine.setTuning(true);
+            break;
+
+        case MessageStatus::CycleTuningModes:
+            mEngine.mTuningModule.cycleMode();
+            break;
+
+        case MessageStatus::ExitTuning:
+            mEngine.setTuning(false);
+            break;            
+
         default:
             break;
     }

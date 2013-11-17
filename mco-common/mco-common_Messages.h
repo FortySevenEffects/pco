@@ -49,6 +49,9 @@ struct MessageStatus
         , Mute                  = 0x93  // Status only
         , Unmute                = 0x94  // Status only
         , ResetPhase            = 0x95  // Status only
+        , EnterTuning           = 0x96  // Status only
+        , CycleTuningModes      = 0x97  // Status only
+        , ExitTuning            = 0x98  // Status only
 
         , lastAddressedStatus
         , MaximumStatus     = 0xFF

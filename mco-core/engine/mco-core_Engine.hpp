@@ -50,6 +50,8 @@ inline void Engine<Traits>::init()
     // See this useful tool: http://www.engbedded.com/fusecalc/
     
     mTimer.init();
+    mTuningModule.init();
+
     mPortamento.init();
     mVibrato.init();
     mPWM.init();
@@ -59,25 +61,35 @@ inline void Engine<Traits>::init()
     TickTimer::enableInterruptOverflow();
     TickTimer::start(TickTimer::prescale1);
 
-    sei(); // Activate global interrupts
-
-    mTwang.setDuration(1000);
+    mTwang.setAmount(1200); // 1 octave
     mTwang.setFrequency(1000);
+    mTwang.setDuration(1000);
+
+    sei(); // Activate global interrupts
 }
 
 template<class Traits>
 inline void Engine<Traits>::process()
 {
-    mPortamento.process(mPitch);
+    if (mTuning)
+    {
+        mTuningModule.process(mPitch);
+    }
+    else
+    {
+        mPortamento.process(mPitch);
     
-    mPWM.process();
+        mPWM.process();
 
-    Pitch modulation = mModulation;
-    mVibrato.process(modulation);
-    mSlowRandom.process(modulation);
-    
-    mPitch += modulation;
-    mPitch += mDetune;
+        Pitch modulation = mModulation;
+        mVibrato.process(modulation);
+        mSlowRandom.process(modulation);
+        mTwang.process(modulation);
+        
+        mPitch += modulation;
+        mPitch += mDetune;    
+    }
+
     computeClock();
 }
 
@@ -119,6 +131,14 @@ template<class Traits>
 inline void Engine<Traits>::unmute()
 {
     mTimer.start();
+}
+
+// -----------------------------------------------------------------------------
+
+template<class Traits>
+inline void Engine<Traits>::setTuning(bool inTuning)
+{
+    mTuning = inTuning;
 }
 
 // -----------------------------------------------------------------------------

@@ -48,6 +48,9 @@ append(mco-core_SOURCES
     modules/mco-core_Twang.cpp
     modules/mco-core_Twang.hpp
     modules/mco-core_Twang.h
+    modules/mco-core_Tuning.cpp
+    modules/mco-core_Tuning.hpp
+    modules/mco-core_Tuning.h
 )
 
 append(mco-core_PUBLIC_DEPS
