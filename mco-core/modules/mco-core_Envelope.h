@@ -125,6 +125,7 @@ private:
 
     State mState;
     CoreEnvelope mCore;
+    Sample mPreviousSample;
 };
 
 END_MCO_CORE_NAMESPACE

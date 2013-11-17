@@ -94,9 +94,9 @@ template<class Mapper>
 inline Phase DecayEnvelope<Mapper>::computePhaseIncrement(TimeFactor inTime)
 {
     static const Phase phaseMax = 0xffff;
-    static const FixedPointTime tickTime = 1000000 / sTickFrequency;
-    const FixedPointTime time = Mapper::map(inTime);
-    const uint16 numTicksPerPeriod = time / tickTime;
+    static const FixedPointTime tickTime = 1000000 / sTickFrequency; // 12
+    const FixedPointTime time = Mapper::map(inTime);    // min: 1000, max = 4000000
+    const uint16 numTicksPerPeriod = time / tickTime;   // min: 83,   max = 333333 -> overflow
     return phaseMax / numTicksPerPeriod;
 }
 
@@ -187,6 +187,7 @@ inline void AdsrEnvelope<Mapper>::process(Sample& outSample)
         case sustain:   processSustain(outSample);  break;
         case release:   processRelease(outSample);  break;
     }
+    mPreviousSample = outSample;
 }
 
 template<class Mapper>

@@ -82,4 +82,9 @@ inline uint16 amount(uint16 inValue, Amount inAmount)
     return (uint32(inValue) * uint32(inAmount)) >> sAmountShift;
 }
 
+inline int16 amount(int16 inValue, Amount inAmount)
+{
+    return (int32(inValue) * int32(inAmount)) >> sAmountShift;
+}
+
 END_MCO_CORE_NAMESPACE

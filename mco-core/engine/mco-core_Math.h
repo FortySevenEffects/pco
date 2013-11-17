@@ -36,6 +36,7 @@ inline uint16 interpol_u(uint16 inA, uint16 inB, uint7 inAmount);
 // -----------------------------------------------------------------------------
 
 inline uint16 amount(uint16 inValue, Amount inAmount);
+inline int16 amount(int16 inValue, Amount inAmount);
 
 END_MCO_CORE_NAMESPACE
 

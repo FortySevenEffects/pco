@@ -52,15 +52,12 @@ inline void Portamento::process(Pitch& outPitch)
     {
         Envelope::Sample sample = 0;
         mEnvelope.process(sample);
+        sample = sUModSampleMax - sample;
 
-        const int16 originFlat = mOriginPitch.flatten();
-        const int16 targetFlat = mTargetPitch.flatten();
-
-        // Diff is negative when target > origin to account for negative progression of decay envelope.
-        const int16 diff = originFlat - targetFlat;
+        const int16 diff = mTargetPitch.flatten() - mOriginPitch.flatten();
         const int16 scaledEnvelope = (int32(sample) * diff) >> 16;
-        const int16 pitchOffset = originFlat + scaledEnvelope;
-        outPitch.cents += pitchOffset;
+        outPitch = mOriginPitch;
+        outPitch.cents += scaledEnvelope;
         outPitch.computeRange();
     }
     else
