@@ -56,7 +56,7 @@ inline void Twang<Traits>::process(Pitch& ioPitch)
 template<class Traits>
 inline void Twang<Traits>::process(ModSample& ioSample)
 {
-    if (mEnvelope.isActive())
+    if (mEnvelope.isActive() && mAmount)
     {
         ModSample  lfoSample = 0;
         UModSample envSample = 0;
@@ -64,7 +64,8 @@ inline void Twang<Traits>::process(ModSample& ioSample)
         mLfo.process(lfoSample);
         mEnvelope.process(envSample);
 
-        ioSample += (int32(lfoSample) * int32(envSample)) >> 16;
+        const ModSample fullScaleMod = (int32(lfoSample) * int32(envSample)) >> 16;
+        ioSample += amount(fullScaleMod, mAmount);
     }
 }
 
@@ -108,6 +109,12 @@ template<class Traits>
 inline void Twang<Traits>::setBend(BendAmount inAmount)
 {
     mEnvelope.setBend(inAmount);
+}
+
+template<class Traits>
+inline void Twang<Traits>::setAmount(Amount inAmount)
+{
+    mAmount = inAmount;
 }
 
 END_MCO_CORE_NAMESPACE

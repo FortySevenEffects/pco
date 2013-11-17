@@ -60,10 +60,12 @@ public: // Oscillation parameters
 public: // Envelope parameters
     inline void setDuration(TimeFactor inDecay);
     inline void setBend(BendAmount inAmount);
+    inline void setAmount(Amount inAmount);
 
 private:
     Lfo mLfo;
     Envelope mEnvelope;
+    Amount mAmount;
 };
 
 END_MCO_CORE_NAMESPACE
