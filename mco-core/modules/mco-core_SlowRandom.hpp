@@ -35,7 +35,7 @@ inline SlowRandom::~SlowRandom()
 inline void SlowRandom::process(Pitch& ioPitch)
 {
     const Filter::Sample sample = rand() & 0x07;
-    mFilter.samples[mFilter.writeIndex] = sample;
+    mFilter.samples[mFilter.writeIndex++] = sample;
     mFilter.writeIndex &= (Filter::Size - 1);
 
     int16 sum = 0;
