@@ -7,4 +7,4 @@ target_sources(pco-common
     pco-common_Messages.h
 )
 
-build_avr_library(pco-common)
+build_static_library(pco-common)

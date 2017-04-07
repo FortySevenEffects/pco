@@ -58,4 +58,4 @@ target_deps(pco-core
     pco-common
 )
 
-build_avr_library(pco-core)
+build_static_library(pco-core)

@@ -13,5 +13,5 @@ target_deps(pco-controller
     pco-core
 )
 
-build_avr_library(pco-controller)
+build_static_library(pco-controller)
 

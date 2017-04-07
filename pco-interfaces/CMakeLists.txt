@@ -19,4 +19,4 @@ target_deps(pco-interfaces
     pco-core
 )
 
-build_avr_library(pco-interfaces)
+build_static_library(pco-interfaces)
