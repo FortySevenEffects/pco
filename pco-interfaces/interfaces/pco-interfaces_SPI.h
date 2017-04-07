@@ -4,23 +4,23 @@
 #include <engine/pco-core_Pitch.h>
 #include <engine/pco-core_Math.h>
 #include <pco-common_Messages.h>
-#include <io/ak47_Spi.h>
+#include <io/cake_Spi.h>
 
 BEGIN_PCO_INTERFACES_NAMESPACE
 
 /*! Expected Traits content:
  * typedef Engine                               PCO Engine
- * typedef ak47::Pin MosiPin                    SPI Pin
- * typedef ak47::Pin MisoPin                    SPI Pin
- * typedef ak47::Pin SckPin                     SPI Pin
- * typedef ak47::Pin SsPin                      SPI Pin
+ * typedef cake::Pin MosiPin                    SPI Pin
+ * typedef cake::Pin MisoPin                    SPI Pin
+ * typedef cake::Pin SckPin                     SPI Pin
+ * typedef cake::Pin SsPin                      SPI Pin
  */
 template<class Traits>
 class SpiInterface
-    : public ak47::SpiSlave<8>
+    : public cake::SpiSlave<8>
 {
 private:
-    typedef ak47::SpiSlave<8>           Super;
+    typedef cake::SpiSlave<8>           Super;
     typedef typename Traits::Engine     Engine;
 
 public:

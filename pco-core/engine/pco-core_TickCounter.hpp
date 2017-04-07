@@ -19,14 +19,14 @@ inline void TickCounter::tick()
 
 inline void TickCounter::fetchTickCounter(TickCount& outCount)
 {
-    ak47::ScopedInterruptLock lock;
+    cake::ScopedInterruptLock lock;
     outCount = mCount;
     mCount = 0;
 }
 
 inline void TickCounter::resetTickCounter()
 {
-    ak47::ScopedInterruptLock lock;
+    cake::ScopedInterruptLock lock;
     mCount = 0;
 }
 
