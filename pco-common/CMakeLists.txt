@@ -8,4 +8,3 @@ append(pco-common_SOURCES
 )
 
 build_avr_library(pco-common)
-
