@@ -14,7 +14,7 @@ template<class Traits>
 class PcoModel
 {
 public:
-    typedef typename Traits::SpiInterface   Spi;
+    typedef typename Traits::SpiInterface Spi;
 
 public:
     inline  PcoModel(Spi& inInterface);

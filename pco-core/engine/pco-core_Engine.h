@@ -81,7 +81,6 @@ private:
     uint8           mPrescaleIndex;
     uint32          mPrescaledClock;
     uint64          mClockDivision;
-
     bool            mTuning;
 };
 

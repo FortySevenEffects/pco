@@ -8,7 +8,7 @@ struct MessageStatus
 {
     enum
     {                               // Data structure:
-        Invalid                 = 0x00  // For error detection
+          Invalid               = 0x00  // For error detection
         , CoarseNote            = 0x80  // [Semitones]
         , FineNote              = 0x81  // [Semitones]  [Cents]
         , GlobalDetune          = 0x82  // [MSB]        [LSB]   (14 bits signed)
@@ -32,7 +32,7 @@ struct MessageStatus
         , EnterTuning           = 0x96  // Status only
         , CycleTuningModes      = 0x97  // Status only
         , ExitTuning            = 0x98  // Status only
-
+          
         , lastAddressedStatus
         , MaximumStatus     = 0xFF
     };

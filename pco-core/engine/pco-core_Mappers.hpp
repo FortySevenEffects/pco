@@ -40,5 +40,4 @@ inline Type LogMapper<Type, Min, Max, BendAmount>::map(Amount inAmount)
     const uint32 amountB = uint32(BendAmount) * uint32(valueLog);
     return (amountA + amountB) >> 7;
 }
-
 END_PCO_CORE_NAMESPACE

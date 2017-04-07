@@ -40,7 +40,7 @@ inline void Engine<Traits>::init()
     // Activate tick for modules - Match defs in pco-core_Defs.h
     TickTimer::enableInterruptOverflow();
     TickTimer::start(TickTimer::prescale1);
-
+  
     mTwang.setAmount(1200); // 1 octave
     mTwang.setFrequency(1000);
     mTwang.setDuration(1000);
@@ -69,7 +69,6 @@ inline void Engine<Traits>::process()
         mPitch += modulation;
         mPitch += mDetune;
     }
-
     computeClock();
 }
 
