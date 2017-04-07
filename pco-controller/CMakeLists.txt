@@ -1,6 +1,6 @@
 target(pco-controller)
 
-append(pco-controller_SOURCES
+target_sources(pco-controller
     pco-controller.cpp
     pco-controller.h
 
@@ -9,7 +9,7 @@ append(pco-controller_SOURCES
     pco-controller_PcoModel.h
 )
 
-append(pco-controller_PUBLIC_DEPS
+target_deps(pco-controller
     pco-core
 )
 

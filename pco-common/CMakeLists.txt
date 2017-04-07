@@ -1,6 +1,6 @@
 target(pco-common)
 
-append(pco-common_SOURCES
+target_sources(pco-common
     pco-common.cpp
     pco-common.h
     pco-common_Messages.cpp

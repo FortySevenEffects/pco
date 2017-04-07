@@ -1,6 +1,6 @@
 target(pco-interfaces)
 
-append(pco-interfaces_SOURCES
+target_sources(pco-interfaces
     pco-interfaces.cpp
     pco-interfaces.h
 
@@ -15,9 +15,8 @@ append(pco-interfaces_SOURCES
     interfaces/pco-interfaces_SPI.h
 )
 
-append(pco-interfaces_PUBLIC_DEPS
+target_deps(pco-interfaces
     pco-core
 )
 
 build_avr_library(pco-interfaces)
-

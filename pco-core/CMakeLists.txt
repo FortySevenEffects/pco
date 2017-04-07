@@ -1,6 +1,6 @@
 target(pco-core)
 
-append(pco-core_SOURCES
+target_sources(pco-core
     pco-core.cpp
     pco-core.h
     pco-core_Defs.cpp
@@ -53,10 +53,9 @@ append(pco-core_SOURCES
     modules/pco-core_Tuning.h
 )
 
-append(pco-core_PUBLIC_DEPS
+target_deps(pco-core
     cake
     pco-common
 )
 
 build_avr_library(pco-core)
-
