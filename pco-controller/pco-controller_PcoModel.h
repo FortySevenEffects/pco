@@ -7,8 +7,8 @@
 BEGIN_PCO_CONTROLLER_NAMESPACE
 
 /*! Expected Traits content:
- *  typedef ak47::SpiMaster SpiInterface
- *  typedef ak47::Pin       SlaveSelectPin
+ *  typedef cake::SpiMaster SpiInterface
+ *  typedef cake::Pin       SlaveSelectPin
  */
 template<class Traits>
 class PcoModel

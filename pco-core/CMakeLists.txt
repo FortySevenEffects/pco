@@ -54,7 +54,7 @@ append(pco-core_SOURCES
 )
 
 append(pco-core_PUBLIC_DEPS
-    ak47
+    cake
     pco-common
 )
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pco-core.h"
-#include <interrupts/ak47_Atomic.h>
+#include <interrupts/cake_Atomic.h>
 
 BEGIN_PCO_CORE_NAMESPACE
 

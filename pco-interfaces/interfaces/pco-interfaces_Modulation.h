@@ -2,13 +2,13 @@
 
 #include "pco-interfaces.h"
 #include <engine/pco-core_Pitch.h>
-#include <io/ak47_Analog.h>
+#include <io/cake_Analog.h>
 
 BEGIN_PCO_INTERFACES_NAMESPACE
 
 // Expected Traits content:
 // static const byte sNumBits        Used for oversampling filter (must be > 10)
-// typedef [ak47::AnalogPin] AdcPin  Pin to be used for ADC readings
+// typedef [cake::AnalogPin] AdcPin  Pin to be used for ADC readings
 
 template<class Traits>
 class ModulationInput
@@ -25,8 +25,8 @@ public:
     inline void setRange(pco_core::Pitch& inRange);
 
 private:
-    typedef ak47::Adc::Sample Sample;
-    ak47::AdcOversamplingFilter<Traits::sNumBits> mFilter;
+    typedef cake::Adc::Sample Sample;
+    cake::AdcOversamplingFilter<Traits::sNumBits> mFilter;
     uint16 mRange;
 };
 
