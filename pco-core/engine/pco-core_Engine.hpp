@@ -30,13 +30,20 @@ inline void Engine<Traits>::init()
     // See this useful tool: http://www.engbedded.com/fusecalc/
 
     mTimer.init();
+    mTuningModule.init();
+
     mPortamento.init();
     mVibrato.init();
     mPWM.init();
+    mTwang.init();
 
     // Activate tick for modules - Match defs in pco-core_Defs.h
     TickTimer::enableInterruptOverflow();
     TickTimer::start(TickTimer::prescale1);
+  
+    mTwang.setAmount(1200); // 1 octave
+    mTwang.setFrequency(1000);
+    mTwang.setDuration(1000);
 
     sei(); // Activate global interrupts
 }
@@ -44,15 +51,24 @@ inline void Engine<Traits>::init()
 template<class Traits>
 inline void Engine<Traits>::process()
 {
-    mPortamento.process(mPitch);
+    if (mTuning)
+    {
+        mTuningModule.process(mPitch);
+    }
+    else
+    {
+        mPortamento.process(mPitch);
 
-    mPWM.process();
+        mPWM.process();
 
-    Pitch modulation = mModulation;
-    mVibrato.process(modulation);
+        Pitch modulation = mModulation;
+        mVibrato.process(modulation);
+        mSlowRandom.process(modulation);
+        mTwang.process(modulation);
 
-    mPitch += modulation;
-    mPitch += mDetune;
+        mPitch += modulation;
+        mPitch += mDetune;
+    }
     computeClock();
 }
 
@@ -60,6 +76,7 @@ template<class Traits>
 inline void Engine<Traits>::setPitch(const Pitch& inPitch)
 {
     mPortamento.trigger(inPitch);
+    mTwang.trigger();
     unmute();
 }
 
@@ -93,6 +110,14 @@ template<class Traits>
 inline void Engine<Traits>::unmute()
 {
     mTimer.start();
+}
+
+// -----------------------------------------------------------------------------
+
+template<class Traits>
+inline void Engine<Traits>::setTuning(bool inTuning)
+{
+    mTuning = inTuning;
 }
 
 // -----------------------------------------------------------------------------
@@ -158,6 +183,7 @@ inline void Engine<Traits>::handleSystemTick()
     mVibrato.tick();
     mPWM.tick();
     mPortamento.tick();
+    mTwang.tick();
 }
 
 END_PCO_CORE_NAMESPACE

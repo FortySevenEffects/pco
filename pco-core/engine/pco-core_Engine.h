@@ -4,10 +4,12 @@
 #include "engine/pco-core_Pitch.h"
 #include "engine/pco-core_Timer.h"
 #include "engine/pco-core_Tables.h"
-#include "engine/pco-core_FlagBox.h"
 #include "modules/pco-core_Portamento.h"
 #include "modules/pco-core_Vibrato.h"
 #include "modules/pco-core_PWM.h"
+#include "modules/pco-core_SlowRandom.h"
+#include "modules/pco-core_Tuning.h"
+#include "modules/pco-core_Twang.h"
 #include <avr/interrupt.h>
 
 BEGIN_PCO_CORE_NAMESPACE
@@ -41,6 +43,9 @@ public:
     inline void unmute();
 
 public:
+    inline void setTuning(bool inTuning);
+
+public:
     inline byte getCurrentOctave() const;
     inline byte getCurrentSemiIndex() const;
     inline byte getCurrentCentsOffset() const;
@@ -53,9 +58,19 @@ public:
 
 public: // For convenience access
     TimerClass      mTimer;
+    Tuning          mTuningModule;
+
     Portamento      mPortamento;
     Vibrato         mVibrato;
     PwmClass        mPWM;
+    SlowRandom      mSlowRandom;
+
+    struct TwangTraits
+    {
+        typedef ExpMapper<FixedPointTime, 1000, 4000000>    EnvelopeMapper;
+        typedef ExpMapper<FixedPointFreq, 100, 10000>       LfoMapper;
+    };
+    Twang<TwangTraits> mTwang;
 
 private:
     Pitch           mPitch;
@@ -66,6 +81,7 @@ private:
     uint8           mPrescaleIndex;
     uint32          mPrescaledClock;
     uint64          mClockDivision;
+    bool            mTuning;
 };
 
 END_PCO_CORE_NAMESPACE

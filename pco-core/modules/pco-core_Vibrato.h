@@ -3,7 +3,6 @@
 #include "pco-core.h"
 #include "engine/pco-core_Math.h"
 #include "engine/pco-core_Pitch.h"
-#include "engine/pco-core_FlagBox.h"
 #include "engine/pco-core_Mappers.h"
 #include "modules/pco-core_LFO.h"
 
@@ -27,7 +26,7 @@ public:
     inline void setWaveform(byte inWaveform);
 
 private:
-    typedef LinearMapper<FixedPointFreq, 1000, 8000> SpeedMapper;
+    typedef ExpMapper<FixedPointFreq, 1000, 8000> SpeedMapper;
     typedef LFO<SpeedMapper> VibratoLfo;
 
     Amount      mAmount;

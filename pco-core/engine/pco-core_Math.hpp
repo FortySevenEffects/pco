@@ -41,7 +41,14 @@ inline int14 decode_s14(uint7 inMSB, uint7 inLSB)
 
 // -----------------------------------------------------------------------------
 
-inline int16 interpol(int16 inA, int16 inB, uint7 inAmount)
+inline int16 interpol_s(int16 inA, int16 inB, uint7 inAmount)
+{
+    const uint32 amountA = uint32(0x7f - inAmount) * uint32(inA);
+    const uint32 amountB = uint32(inAmount) * uint32(inB);
+    return (amountA + amountB) >> 7;
+}
+
+inline uint16 interpol_u(uint16 inA, uint16 inB, uint7 inAmount)
 {
     const uint32 amountA = uint32(0x7f - inAmount) * uint32(inA);
     const uint32 amountB = uint32(inAmount) * uint32(inB);
@@ -53,6 +60,11 @@ inline int16 interpol(int16 inA, int16 inB, uint7 inAmount)
 inline uint16 amount(uint16 inValue, Amount inAmount)
 {
     return (uint32(inValue) * uint32(inAmount)) >> sAmountShift;
+}
+
+inline int16 amount(int16 inValue, Amount inAmount)
+{
+    return (int32(inValue) * int32(inAmount)) >> sAmountShift;
 }
 
 END_PCO_CORE_NAMESPACE

@@ -61,20 +61,20 @@ inline void PcoModel<Traits>::setDetune(const pco_core::Pitch& inPitch)
 // -----------------------------------------------------------------------------
 
 template<class Traits>
-inline void PcoModel<Traits>::setPortamentoAmount(unsigned inAmount)
+inline void PcoModel<Traits>::setPortamentoTime(unsigned inDuration)
 {
     ScopedSlaveSelector selector;
-    mInterface.send(pco_common::MessageStatus::PortamentoAmount);
-    mInterface.send(inAmount >> 7);
-    mInterface.send(inAmount & 0x7f);
+    mInterface.send(pco_common::MessageStatus::PortamentoTime);
+    mInterface.send(inDuration >> 7);
+    mInterface.send(inDuration & 0x7f);
 }
 
 template<class Traits>
-inline void PcoModel<Traits>::setPortamentoMode(byte inMode)
+inline void PcoModel<Traits>::setPortamentoBend(byte inBend)
 {
     ScopedSlaveSelector selector;
-    mInterface.send(pco_common::MessageStatus::PortamentoMode);
-    mInterface.send(inMode);
+    mInterface.send(pco_common::MessageStatus::PortamentoBend);
+    mInterface.send(inBend);
 }
 
 // -----------------------------------------------------------------------------

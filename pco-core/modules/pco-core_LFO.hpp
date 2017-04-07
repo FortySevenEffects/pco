@@ -79,7 +79,7 @@ inline void LFO<Mapper>::generateSine(ModSample& outSample)
     const int16 sampleA = LookupTables::getHalfSine(index);
     const int16 sampleB = LookupTables::getHalfSine(index + 1);
     const int16 sign = (mPhase & 0x8000) ? -1 : 1;
-    outSample = sign * interpol(sampleA, sampleB, alpha);
+    outSample = sign * interpol_s(sampleA, sampleB, alpha);
 }
 
 template<class Mapper>

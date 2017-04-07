@@ -3,7 +3,6 @@
 #include "pco-core.h"
 #include "pco-core_Defs.h"
 #include "engine/pco-core_Math.h"
-#include "engine/pco-core_FlagBox.h"
 #include <time/cake_Timer.h>
 
 BEGIN_PCO_CORE_NAMESPACE
@@ -39,6 +38,7 @@ private:
     volatile uint16 mValue;
     volatile byte mPrescale;
     volatile PulseWidth mPulseWidth;
+    volatile bool mRefresh;
 };
 
 END_PCO_CORE_NAMESPACE

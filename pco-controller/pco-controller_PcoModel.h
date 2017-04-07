@@ -27,8 +27,8 @@ public:
     inline void setPitch(const pco_core::Pitch& inPitch);
     inline void setDetune(const pco_core::Pitch& inPitch);
 
-    inline void setPortamentoAmount(unsigned inAmount);
-    inline void setPortamentoMode(byte inMode);
+    inline void setPortamentoTime(unsigned inTime);
+    inline void setPortamentoBend(byte inBend);
 
     inline void setVibratoSpeed(unsigned inSpeed);
     inline void setVibratoAmount(unsigned inAmount);

@@ -1,21 +1,21 @@
 #pragma once
 
 #include "pco-core.h"
-#include "engine/pco-core_Math.h"
 #include "engine/pco-core_Pitch.h"
-#include "engine/pco-core_FlagBox.h"
-#include "engine/pco-core_Tables.h"
+#include "engine/pco-core_Mappers.h"
+#include "modules/pco-core_Envelope.h"
 
 BEGIN_PCO_CORE_NAMESPACE
 
 class Portamento
 {
 public:
-    enum
-    {
-        Linear      = 0,
-        Exponential = 1,
-    };
+    static const FixedPointTime sMinTime = 1000;    // 1 ms
+    static const FixedPointTime sMaxTime = 4000000; // 4 s
+
+    typedef ExpMapper<FixedPointTime, sMinTime, sMaxTime, 0x7f> EnvelopeMapper;
+    typedef DecayEnvelope<EnvelopeMapper>                       Envelope;
+    typedef typename Envelope::BendAmount                       BendAmount;
 
 public:
     inline Portamento();
@@ -30,21 +30,13 @@ public:
     inline void tick();
 
 public:
-    inline void setAmount(Amount inAmount);
-    inline void setMode(byte inMode);
-    inline void setEnabled(bool inEnabled);
+    inline void setDuration(TimeFactor inDuration);
+    inline void setBend(BendAmount inAmount);
 
 private:
-    inline void processLinear(Pitch& outPitch);
-    inline void processExponential(Pitch& outPitch);
-
-private:
-    typedef uint16 Phase;
-    Phase mPhase;
-    volatile Phase mPhaseCounter;
+    Envelope mEnvelope;
     Pitch mTargetPitch;
     Pitch mOriginPitch;
-    uint8 mMode;
 };
 
 END_PCO_CORE_NAMESPACE

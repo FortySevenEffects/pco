@@ -21,10 +21,13 @@ static const uint8 sAmountShift = 14;
 
 // -----------------------------------------------------------------------------
 
-typedef Amount  Frequency;          // Amount passed to FrequencyMapper
+typedef Amount  Frequency;          // Amount passed to frequency mappers
+typedef Amount  TimeFactor;         // Amount passed to time mappers
 typedef uint16  Phase;
-typedef int16   ModSample;          // Modulation sample
-typedef uint32  FixedPointFreq;     // Fixed point frequency, 1 = 0.001 Hz
+typedef int16   ModSample;          // Modulation sample (bipolar)
+typedef uint16  UModSample;         // Modulation sample (positive only)
+typedef uint32  FixedPointFreq;     // Fixed point frequency, 1 = 0.001 Hz -> range = 0.001 Hz -> 4.2 MHz
+typedef uint32  FixedPointTime;     // Fixed point time, 1 = 1 us -> 70 minutes
 
 // -----------------------------------------------------------------------------
 
@@ -33,14 +36,16 @@ static const uint8 sPulseWidthShift = 15;
 
 // -----------------------------------------------------------------------------
 
-static const ModSample sModSampleMax = 32767;
-static const ModSample sModSampleMin = -1 * sModSampleMax;
+static const ModSample sModSampleMax    = 32767;
+static const ModSample sModSampleMin    = -1 * sModSampleMax;
+static const UModSample sUModSampleMax  = 0xffff;
+static const UModSample sUModSampleMin  = 0;
 
 // -----------------------------------------------------------------------------
 
 // Match tick timer settings here
-static const uint32 sTickPrescale   = 8;
+static const uint32 sTickPrescale   = 1;
 static const uint32 sTickTimerWidth = 256;
-static const uint32 sTickFrequency = F_CPU / (sTickPrescale * sTickTimerWidth);
+static const uint32 sTickFrequency  = F_CPU / (sTickPrescale * sTickTimerWidth);
 
 END_PCO_CORE_NAMESPACE
